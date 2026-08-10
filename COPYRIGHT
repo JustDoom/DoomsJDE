@@ -1,0 +1,54 @@
+DoomsJDE
+Copyright (C) 2026 JustDoom <justdoomdev@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+Third-party dependencies
+------------------------
+RSyntaxTextArea, RSTAUI, AutoComplete (fifesoft)  -- BSD-3-Clause
+FlatLaf, FlatLaf IntelliJ Themes (FormDev)        -- Apache-2.0
+JUnit 5                                           -- EPL-2.0 (test only)
+
+com.fifesoft:spellchecker  -- LGPL-2.1
+    Note: this artifact's POM declares "Modified BSD License", but that is
+    incorrect. The project's own LICENSE.md is the LGPL-2.1, and its README
+    states "Just like Jazzy itself, this add-on is licensed under the LGPL".
+    The jar contains Jazzy (Copyright (C) 2001 Mindaugas Idzelis) repackaged
+    as org.fife.com.swabunga.spell.
+    Source: https://github.com/bobbylight/SpellChecker
+
+    This library is used as an unmodified, separately distributed jar. No
+    part of it is copied into this source tree, and it can be replaced by a
+    user-modified build without rebuilding DoomsJDE.
+
+english_dic.zip  -- LGPL-2.1, from the same project
+    Built by the SpellChecker project from the .dic files in
+    src/main/dist/english_dic/. Redistributed here unmodified.
+
+    The word lists were adapted from the WinEdt English_US/English_UK
+    dictionaries by Patrick W Daly, themselves compiled by Aleksander Simonic
+    from public domain dictionaries packaged with the amSpell spellchecker by
+    Erik Frambach, and included with Jazzy by permission of Patrick and
+    Aleksander. The full notice is english.txt inside the archive; it must be
+    kept there when this archive is redistributed.
+
+
+Licence compatibility
+---------------------
+LGPL-2.1 section 3 permits the library to be taken under the GNU GPL version
+2 or any later version, and GPL/AGPL-3.0 section 13 permits GPL-3.0 and
+AGPL-3.0 works to be combined. Distributing this program as a whole under the
+AGPL-3.0 is therefore permitted. All other dependencies above are permissive
+and impose no conditions beyond attribution.
