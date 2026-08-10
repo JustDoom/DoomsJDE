@@ -3,7 +3,6 @@ package com.imjustdoom.doomsjde;
 import com.imjustdoom.doomsjde.filetypes.*;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.spell.SpellingParser;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -14,8 +13,12 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -59,6 +62,24 @@ public class Editor extends JFrame {
         RTextScrollPane sp = new RTextScrollPane(textArea);
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, sp);
 
+        File[] openFile = new File[1];
+        textArea.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "save");
+        textArea.getActionMap().put("save", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (openFile[0] == null) {
+                    return;
+                }
+
+                try {
+                    Files.writeString(openFile[0].toPath(), textArea.getText());
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(Editor.this, "Unable to save " + openFile[0].getName() + ": " + ex.getMessage(),
+                            "Save failed", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         JTree fileTree = new JTree(new DefaultTreeModel(root));
         fileTree.setCellRenderer(new DefaultTreeCellRenderer() {
             @Override
@@ -95,6 +116,7 @@ public class Editor extends JFrame {
                     textArea.setCaretPosition(0);
                     textArea.setSyntaxEditingStyle(readableType.getSyntaxHighlighter());
                     textArea.setEditable(true);
+                    openFile[0] = file;
                 } catch (IOException ex) {
                     // Unable to read the file type :(
                     final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", file.getName());
@@ -102,6 +124,7 @@ public class Editor extends JFrame {
                     JLabel label = new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER);
                     splitPane.setRightComponent(label);
                     textArea.setEditable(false);
+                    openFile[0] = null;
                     System.err.println(text);
                 }
             }

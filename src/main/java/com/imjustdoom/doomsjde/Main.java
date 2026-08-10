@@ -4,6 +4,7 @@ import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 
 import javax.swing.*;
 
+// It actually saves!
 public class Main {
     void main() {
         FlatDraculaIJTheme.setup();
