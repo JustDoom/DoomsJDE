@@ -144,6 +144,8 @@ public class Editor extends JFrame {
 
         CompletionProvider provider = createCompletionProvider();
         AutoCompletion ac = new AutoCompletion(provider);
+        ac.setAutoActivationEnabled(true);
+        ac.setAutoActivationDelay(200);
         ac.install(textArea);
 
         setContentPane(cp);
@@ -170,6 +172,7 @@ public class Editor extends JFrame {
 
     private CompletionProvider createCompletionProvider() {
         DefaultCompletionProvider provider = new DefaultCompletionProvider();
+        provider.setAutoActivationRules(true, ".");
 
         provider.addCompletion(new BasicCompletion(provider, "abstract"));
         provider.addCompletion(new BasicCompletion(provider, "assert"));
