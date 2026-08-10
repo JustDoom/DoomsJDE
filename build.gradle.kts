@@ -1,0 +1,37 @@
+plugins {
+    id("java")
+    id("application")
+}
+
+application {
+    mainClass = "com.imjustdoom.doomsjde.Main"
+    applicationDefaultJvmArgs = listOf(
+        "-Xmx1g",
+        "-XX:+UseCompactObjectHeaders",
+        "-Dawt.useSystemAAFontSettings=on",
+        "-Dswing.aatext=true",
+    )
+}
+
+group = "com.imjustdoom.doomsjde"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.fifesoft:rsyntaxtextarea:4.0.1")
+    implementation("com.fifesoft:spellchecker:3.4.1")
+    implementation("com.fifesoft:rstaui:3.3.2")
+    implementation("com.fifesoft:autocomplete:3.3.3")
+    implementation("com.formdev:flatlaf:3.7.2")
+    implementation("com.formdev:flatlaf-intellij-themes:3.7.2")
+    testImplementation(platform("org.junit:junit-bom:6.0.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
