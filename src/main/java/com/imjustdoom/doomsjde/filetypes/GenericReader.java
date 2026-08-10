@@ -9,12 +9,12 @@ import java.nio.file.Files;
 public class GenericReader implements ReadableType {
     @Override
     public String[] recognisedFileTypes() {
-        return new String[]{"Hello", "There"};
+        return new String[0];
     }
 
     @Override
     public String getSyntaxHighlighter() {
-        return SyntaxConstants.SYNTAX_STYLE_JAVA;
+        return SyntaxConstants.SYNTAX_STYLE_NONE;
     }
 
     @Override

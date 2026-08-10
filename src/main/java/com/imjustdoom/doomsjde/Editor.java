@@ -1,6 +1,6 @@
 package com.imjustdoom.doomsjde;
 
-import com.imjustdoom.doomsjde.filetypes.GenericReader;
+import com.imjustdoom.doomsjde.filetypes.*;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -18,13 +18,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Editor extends JFrame {
     private static final Comparator<File> TREE_ORDER = Comparator
             .comparing(File::isFile)
             .thenComparing(File::getName, String.CASE_INSENSITIVE_ORDER);
 
+    private static final Map<String, ReadableType> READABLE_TYPES = new HashMap<>();
+
     public Editor(File directory) throws IOException {
+        registerFileTypes(new BatReader(), new CSVReader(), new DockerfileReader(), new EnvReader(), new IniReader(),
+                new JavaReader(), new JsonReader(), new KotlinReader(), new MarkdownReader(), new PowershellReader(),
+                new PropertiesReader(), new SQLReader(), new XMLReader(), new YAMLReader());
+        ReadableType genericReader = new GenericReader();
+
         File zip = new File("english_dic.zip");
         SpellingParser parser = SpellingParser.createEnglishSpellingParser(zip, true);
 
@@ -33,7 +42,6 @@ public class Editor extends JFrame {
         DefaultMutableTreeNode root = buildFileTree(directory);
 
         RSyntaxTextArea textArea = new RSyntaxTextArea(20, 60);
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.setFont(new Font("JetBrainsMono NFM", Font.PLAIN, 24));
         textArea.setCodeFoldingEnabled(true);
         textArea.setInsertPairedCharacters(true);
@@ -42,8 +50,6 @@ public class Editor extends JFrame {
         textArea.setMarginLinePosition(80);
         textArea.setCodeFoldingEnabled(true);
 
-        textArea.setEditable(false);
-
         textArea.addParser(parser);
 
         // RSyntaxTextArea ignores the LaF. It has its own theme system
@@ -51,6 +57,7 @@ public class Editor extends JFrame {
                 "/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply(textArea);
 
         RTextScrollPane sp = new RTextScrollPane(textArea);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, sp);
 
         JTree fileTree = new JTree(new DefaultTreeModel(root));
         fileTree.setCellRenderer(new DefaultTreeCellRenderer() {
@@ -75,12 +82,27 @@ public class Editor extends JFrame {
             if (path != null) {
                 // Convert the path to the actual TreeNode
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                File file = (File) node.getUserObject();
+                if (!(node.getUserObject() instanceof File file) || file.isDirectory()) {
+                    return;
+                }
+
+                String[] split = file.getName().split("\\.");
+                ReadableType readableType = READABLE_TYPES.getOrDefault(split[split.length - 1].toLowerCase(), genericReader);
+
                 try {
-                    textArea.setText(new GenericReader().readFile(file));
+                    splitPane.setRightComponent(sp);
+                    textArea.setText(readableType.readFile(file));
                     textArea.setCaretPosition(0);
+                    textArea.setSyntaxEditingStyle(readableType.getSyntaxHighlighter());
+                    textArea.setEditable(true);
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    // Unable to read the file type :(
+                    final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", file.getName());
+                    // HTML so the label wraps to the width it's given
+                    JLabel label = new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER);
+                    splitPane.setRightComponent(label);
+                    textArea.setEditable(false);
+                    System.err.println(text);
                 }
             }
         });
@@ -89,10 +111,11 @@ public class Editor extends JFrame {
         JScrollPane treeScrollPane = new JScrollPane(fileTree);
         treeScrollPane.setPreferredSize(new Dimension(200, 0));
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScrollPane, sp);
         splitPane.setResizeWeight(0.2);
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(200);
+
+        splitPane.setLeftComponent(treeScrollPane);
 
         cp.add(splitPane, BorderLayout.CENTER);
 
@@ -139,5 +162,17 @@ public class Editor extends JFrame {
         provider.addCompletion(new ShorthandCompletion(provider, "serr", "System.err.println();", "System.err.println();"));
 
         return provider;
+    }
+
+    private static void registerFileTypes(ReadableType... readableTypes) {
+        for (ReadableType readableType : readableTypes) {
+            registerFileType(readableType);
+        }
+    }
+
+    private static void registerFileType(ReadableType readableType) {
+        for (String fileType : readableType.recognisedFileTypes()) {
+            READABLE_TYPES.put(fileType, readableType);
+        }
     }
 }
