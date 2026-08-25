@@ -3,6 +3,7 @@ package com.imjustdoom.doomsjde;
 import com.imjustdoom.doomsjde.filetypes.*;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.spell.SpellingParser;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -32,9 +33,20 @@ public class Editor extends JFrame {
     private static final Map<String, ReadableType> READABLE_TYPES = new HashMap<>();
 
     public Editor(File directory) throws IOException {
-        registerFileTypes(new BatReader(), new CSVReader(), new DockerfileReader(), new EnvReader(), new IniReader(),
-                new JavaReader(), new JsonReader(), new KotlinReader(), new MarkdownReader(), new PowershellReader(),
-                new PropertiesReader(), new SQLReader(), new XMLReader(), new YAMLReader());
+        registerFileTypes(new GenericReader(new String[]{"bat"}, SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH),
+                new GenericReader(new String[]{"csv"}, SyntaxConstants.SYNTAX_STYLE_CSV),
+                new GenericReader(new String[]{"dockerfile"}, SyntaxConstants.SYNTAX_STYLE_DOCKERFILE),
+                new GenericReader(new String[]{"env"}, SyntaxConstants.SYNTAX_STYLE_ENV),
+                new GenericReader(new String[]{"ini"}, SyntaxConstants.SYNTAX_STYLE_INI),
+                new GenericReader(new String[]{"java"}, SyntaxConstants.SYNTAX_STYLE_JAVA),
+                new GenericReader(new String[]{"json"}, SyntaxConstants.SYNTAX_STYLE_JSON),
+                new GenericReader(new String[]{"kt", "kts"}, SyntaxConstants.SYNTAX_STYLE_KOTLIN),
+                new GenericReader(new String[]{"md"}, SyntaxConstants.SYNTAX_STYLE_MARKDOWN),
+                new GenericReader(new String[]{"ps1"}, SyntaxConstants.SYNTAX_STYLE_POWERSHELL),
+                new GenericReader(new String[]{"properties"}, SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE),
+                new GenericReader(new String[]{"sql"}, SyntaxConstants.SYNTAX_STYLE_SQL),
+                new GenericReader(new String[]{"xml"}, SyntaxConstants.SYNTAX_STYLE_XML),
+                new GenericReader(new String[]{"yml", "yaml"}, SyntaxConstants.SYNTAX_STYLE_YAML));
         ReadableType genericReader = new GenericReader();
 
         File zip = new File("english_dic.zip");

@@ -7,14 +7,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class GenericReader implements ReadableType {
+    private final String[] fileTypes;
+    private final String syntaxHighlighter;
+
+    public GenericReader() {
+        this(new String[0], SyntaxConstants.SYNTAX_STYLE_NONE);
+    }
+
+    public GenericReader(String[] fileTypes, String syntaxHighlighter) {
+        this.fileTypes = fileTypes;
+        this.syntaxHighlighter = syntaxHighlighter;
+    }
+
     @Override
     public String[] recognisedFileTypes() {
-        return new String[0];
+        return this.fileTypes;
     }
 
     @Override
     public String getSyntaxHighlighter() {
-        return SyntaxConstants.SYNTAX_STYLE_NONE;
+        return this.syntaxHighlighter;
     }
 
     @Override
