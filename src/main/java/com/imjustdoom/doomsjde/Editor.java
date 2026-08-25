@@ -33,20 +33,20 @@ public class Editor extends JFrame {
     private static final Map<String, ReadableType> READABLE_TYPES = new HashMap<>();
 
     public Editor(File directory) throws IOException {
-        registerFileTypes(new GenericReader(new String[]{"bat"}, SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH),
-                new GenericReader(new String[]{"csv"}, SyntaxConstants.SYNTAX_STYLE_CSV),
-                new GenericReader(new String[]{"dockerfile"}, SyntaxConstants.SYNTAX_STYLE_DOCKERFILE),
-                new GenericReader(new String[]{"env"}, SyntaxConstants.SYNTAX_STYLE_ENV),
-                new GenericReader(new String[]{"ini"}, SyntaxConstants.SYNTAX_STYLE_INI),
-                new GenericReader(new String[]{"java"}, SyntaxConstants.SYNTAX_STYLE_JAVA),
-                new GenericReader(new String[]{"json"}, SyntaxConstants.SYNTAX_STYLE_JSON),
-                new GenericReader(new String[]{"kt", "kts"}, SyntaxConstants.SYNTAX_STYLE_KOTLIN),
-                new GenericReader(new String[]{"md"}, SyntaxConstants.SYNTAX_STYLE_MARKDOWN),
-                new GenericReader(new String[]{"ps1"}, SyntaxConstants.SYNTAX_STYLE_POWERSHELL),
-                new GenericReader(new String[]{"properties"}, SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE),
-                new GenericReader(new String[]{"sql"}, SyntaxConstants.SYNTAX_STYLE_SQL),
-                new GenericReader(new String[]{"xml"}, SyntaxConstants.SYNTAX_STYLE_XML),
-                new GenericReader(new String[]{"yml", "yaml"}, SyntaxConstants.SYNTAX_STYLE_YAML));
+        registerFileTypes(new GenericReader(SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH, "bat"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_CSV, "csv"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_DOCKERFILE, "dockerfile"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_ENV, "env"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_INI, "ini"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_JAVA, "java"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_JSON, "json"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_KOTLIN, "kt", "kts"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_MARKDOWN, "md"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_POWERSHELL, "ps1"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE, "properties"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_SQL, "sql"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_XML, "xml"),
+                new GenericReader(SyntaxConstants.SYNTAX_STYLE_YAML, "yml", "yaml"));
         ReadableType genericReader = new GenericReader();
 
         File zip = new File("english_dic.zip");

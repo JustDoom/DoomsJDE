@@ -11,10 +11,10 @@ public class GenericReader implements ReadableType {
     private final String syntaxHighlighter;
 
     public GenericReader() {
-        this(new String[0], SyntaxConstants.SYNTAX_STYLE_NONE);
+        this(SyntaxConstants.SYNTAX_STYLE_NONE);
     }
 
-    public GenericReader(String[] fileTypes, String syntaxHighlighter) {
+    public GenericReader(String syntaxHighlighter, String... fileTypes) {
         this.fileTypes = fileTypes;
         this.syntaxHighlighter = syntaxHighlighter;
     }
