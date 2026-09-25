@@ -42,10 +42,16 @@ public class ProjectSelector extends JFrame {
         });
         content.add(projectSelector, BorderLayout.NORTH);
 
-        JPanel projectsPanel = new JPanel(new GridLayout(0, 1));
+        int MAX_BUTTON_HEIGHT = 40;
+
+        JPanel projectsPanel = new JPanel();
+        projectsPanel.setLayout(new BoxLayout(projectsPanel, BoxLayout.Y_AXIS));
+
         try {
             for (Map.Entry<String, String> project : Main.DATA_HANDLER.getProjects().entrySet()) {
-                projectsPanel.add(new JButton(project.getKey() + " - " + project.getValue()));
+                JButton button = createProjectButton(project, MAX_BUTTON_HEIGHT);
+
+                projectsPanel.add(button);
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
             System.err.println(e.getMessage());
@@ -59,5 +65,22 @@ public class ProjectSelector extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
+    }
+
+    private JButton createProjectButton(Map.Entry<String, String> project, int MAX_BUTTON_HEIGHT) {
+        JButton button = new JButton(project.getKey() + " - " + project.getValue());
+        button.addActionListener(_ -> {
+            dispose();
+            try {
+                new Editor(new File(project.getValue())).setVisible(true);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, MAX_BUTTON_HEIGHT));
+        button.setPreferredSize(new Dimension(0, MAX_BUTTON_HEIGHT));
+        button.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return button;
     }
 }
