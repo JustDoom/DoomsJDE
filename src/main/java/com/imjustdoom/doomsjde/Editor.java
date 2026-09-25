@@ -168,17 +168,30 @@ public class Editor extends JFrame {
     }
 
     private DefaultMutableTreeNode buildFileTree(File directory) {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(directory.getName());
+        return buildFileTree(directory, directory.getName());
+    }
+
+    private DefaultMutableTreeNode buildFileTree(File directory, String path) {
         File[] children = directory.listFiles();
-        if (children == null) {
-            return root;
+        if (children == null || children.length == 0) {
+            return new DefaultMutableTreeNode(path);
         }
 
         Arrays.sort(children, TREE_ORDER);
-        for (File child : children) {
-            root.add(child.isDirectory() ? buildFileTree(child) : new DefaultMutableTreeNode(child));
+
+        if (children.length == 1 && children[0].isDirectory()) {
+            File child = children[0];
+            return buildFileTree(child, path + "/" + child.getName());
         }
 
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(path);
+        for (File child : children) {
+            if (child.isDirectory()) {
+                root.add(buildFileTree(child));
+            } else {
+                root.add(new DefaultMutableTreeNode(child));
+            }
+        }
         return root;
     }
 
