@@ -17,7 +17,7 @@ group = "com.imjustdoom.doomsjde"
 version = "1.0-SNAPSHOT"
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(27))
 }
 
 repositories {
@@ -40,7 +40,7 @@ dependencies {
 tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(25)
+        options.release.set(27)
     }
 
     test {
