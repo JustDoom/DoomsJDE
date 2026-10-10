@@ -1,0 +1,7 @@
+[versions]
+## Better Annotations
+jspecify = "1.0.0" # https://jspecify.dev/docs/using/
+
+[libraries]
+# https://jspecify.dev/docs/using/
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }

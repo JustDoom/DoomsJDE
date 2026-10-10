@@ -1,11 +1,10 @@
-package com.imjustdoom.doomsjde;
+package com.imjustdoom.doomsjde.api.data;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import javax.swing.filechooser.FileSystemView;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,18 +21,25 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
-public class JDEDataHandler {
+public class DataHandler {
     private static final FileSystemView FILE_SYSTEM = FileSystemView.getFileSystemView();
     private static final Path HOME = Paths.get(FILE_SYSTEM.getHomeDirectory().getAbsolutePath(), "/.jde");
 
-    public JDEDataHandler() {
+    private final Logger logger;
+
+    public DataHandler(final Logger logger) {
+        this.logger = logger;
+    }
+
+    public void init() {
         try {
             if (!Files.exists(HOME)) {
                 Files.createDirectory(HOME);
             }
-        } catch (IOException _) {
-            System.err.println("Unable to create the home folder");
+        } catch (final Exception exception) {
+            this.logger.warning("Unable to create the home folder!");
         }
     }
 

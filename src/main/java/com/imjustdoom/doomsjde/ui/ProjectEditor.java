@@ -1,6 +1,7 @@
-package com.imjustdoom.doomsjde;
+package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.adapters.WindowCloseAdapter;
+import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.filetypes.*;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -26,14 +27,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Editor extends JFrame {
+public class ProjectEditor extends JFrame {
     private static final Comparator<File> TREE_ORDER = Comparator
             .comparing(File::isFile)
             .thenComparing(File::getName, String.CASE_INSENSITIVE_ORDER);
 
     private static final Map<String, ReadableType> READABLE_TYPES = new HashMap<>();
 
-    public Editor(File directory) throws IOException {
+    private final JDE instance;
+
+    public ProjectEditor(JDE instance, File directory) throws IOException {
+        this.instance = instance;
+
         registerFileTypes(new GenericReader(SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH, "bat"),
                 new GenericReader(SyntaxConstants.SYNTAX_STYLE_CSV, "csv"),
                 new GenericReader(SyntaxConstants.SYNTAX_STYLE_DOCKERFILE, "dockerfile"),
@@ -87,7 +92,7 @@ public class Editor extends JFrame {
                 try {
                     Files.writeString(openFile[0].toPath(), textArea.getText());
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(Editor.this, "Unable to save " + openFile[0].getName() + ": " + ex.getMessage(),
+                    JOptionPane.showMessageDialog(ProjectEditor.this, "Unable to save " + openFile[0].getName() + ": " + ex.getMessage(),
                             "Save failed", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -167,7 +172,7 @@ public class Editor extends JFrame {
         //Do nothing, so we can re-open the projects window
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowCloseAdapter(this));
+        addWindowListener(new WindowCloseAdapter(this.instance, this));
 
         pack();
         setLocationRelativeTo(null);
