@@ -1,6 +1,6 @@
 plugins {
-    id("java")
-    id("application")
+    `java-library`
+    application
 }
 
 application {
@@ -16,6 +16,10 @@ application {
 group = "com.imjustdoom.doomsjde"
 version = "1.0-SNAPSHOT"
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+}
+
 repositories {
     mavenCentral()
 }
@@ -27,11 +31,19 @@ dependencies {
     implementation("com.fifesoft:autocomplete:3.3.3")
     implementation("com.formdev:flatlaf:3.7.2")
     implementation("com.formdev:flatlaf-intellij-themes:3.7.2")
+
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    compileJava {
+        options.encoding = Charsets.UTF_8.name()
+        options.release.set(25)
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }
