@@ -1,4 +1,4 @@
-package com.imjustdoom.doomsjde.filetypes;
+package com.imjustdoom.doomsjde.api.files;
 
 import java.io.File;
 import java.io.IOException;

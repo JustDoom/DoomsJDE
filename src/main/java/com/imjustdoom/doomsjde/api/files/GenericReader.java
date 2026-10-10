@@ -1,4 +1,4 @@
-package com.imjustdoom.doomsjde.filetypes;
+package com.imjustdoom.doomsjde.api.files;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 

@@ -1,4 +1,4 @@
-package com.imjustdoom.doomsjde.adapters;
+package com.imjustdoom.doomsjde.ui.adapters;
 
 import com.imjustdoom.doomsjde.ui.ProjectEditor;
 import com.imjustdoom.doomsjde.api.JDE;

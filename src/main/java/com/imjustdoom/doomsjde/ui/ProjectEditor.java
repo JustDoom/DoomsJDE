@@ -1,8 +1,8 @@
 package com.imjustdoom.doomsjde.ui;
 
-import com.imjustdoom.doomsjde.adapters.WindowCloseAdapter;
+import com.imjustdoom.doomsjde.ui.adapters.WindowCloseAdapter;
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.filetypes.*;
+import com.imjustdoom.doomsjde.api.files.*;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
