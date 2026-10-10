@@ -1,5 +1,6 @@
 package com.imjustdoom.doomsjde;
 
+import com.imjustdoom.doomsjde.adapters.WindowCloseAdapter;
 import com.imjustdoom.doomsjde.filetypes.*;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -162,7 +163,12 @@ public class Editor extends JFrame {
 
         setContentPane(cp);
         setTitle("Dooms JDE");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        //Do nothing, so we can re-open the projects window
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        addWindowListener(new WindowCloseAdapter(this));
+
         pack();
         setLocationRelativeTo(null);
     }
