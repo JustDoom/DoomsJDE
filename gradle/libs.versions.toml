@@ -5,10 +5,16 @@ jspecify = "1.0.0" # https://jspecify.dev/docs/using/
 ## Gradle API
 shadow = "9.6.1" # https://github.com/GradleUp/shadow/
 
+## File API
+jackson = "3.2.3" # https://github.com/fasterxml/jackson-core
+
 [plugins]
 # https://github.com/GradleUp/shadow
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [libraries]
+# https://github.com/fasterxml/jackson-core
+jackson = { module = "tools.jackson.core:jackson-core", version.ref = "jackson"}
+
 # https://jspecify.dev/docs/using/
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
