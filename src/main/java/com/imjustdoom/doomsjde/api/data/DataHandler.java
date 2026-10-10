@@ -5,7 +5,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import javax.swing.filechooser.FileSystemView;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,29 +16,28 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 public class DataHandler {
-    private static final FileSystemView FILE_SYSTEM = FileSystemView.getFileSystemView();
-    private static final Path HOME = Paths.get(FILE_SYSTEM.getHomeDirectory().getAbsolutePath(), "/.jde");
 
     private final Logger logger;
+    private final Path path;
 
-    public DataHandler(final Logger logger) {
+    public DataHandler(final Logger logger, final Path path) {
         this.logger = logger;
+        this.path = path;
     }
 
     public void init() {
         try {
-            if (!Files.exists(HOME)) {
-                Files.createDirectory(HOME);
+            if (!Files.exists(this.path)) {
+                Files.createDirectory(this.path);
             }
         } catch (final Exception exception) {
-            this.logger.warning("Unable to create the home folder!");
+            this.logger.warning("Unable to create %s".formatted(this.path.toString()));
         }
     }
 
