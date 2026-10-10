@@ -84,6 +84,9 @@ public class ProjectSelector extends JFrame {
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+        setMinimumSize(new Dimension(512, 512));
+
+        //this reduces the windows to fit the size of the content, so minimum size above is nice to have.
         pack();
 
         setLocationRelativeTo(null);
