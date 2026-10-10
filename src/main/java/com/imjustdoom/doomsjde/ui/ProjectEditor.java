@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class ProjectEditor extends JFrame {
     private static final Comparator<File> TREE_ORDER = Comparator
@@ -34,10 +35,12 @@ public class ProjectEditor extends JFrame {
 
     private static final Map<String, ReadableType> READABLE_TYPES = new HashMap<>();
 
+    private final Logger logger;
     private final JDE instance;
 
     public ProjectEditor(JDE instance, File directory) throws IOException {
         this.instance = instance;
+        this.logger = this.instance.getLogger();
 
         registerFileTypes(new GenericReader(SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH, "bat"),
                 new GenericReader(SyntaxConstants.SYNTAX_STYLE_CSV, "csv"),
@@ -143,7 +146,8 @@ public class ProjectEditor extends JFrame {
                     splitPane.setRightComponent(label);
                     textArea.setEditable(false);
                     openFile[0] = null;
-                    System.err.println(text);
+
+                    this.logger.severe(text);
                 }
             }
         });
