@@ -45,6 +45,12 @@ tasks {
         options.release.set(27)
     }
 
+    jar {
+        manifest {
+            attributes["Main-Class"] = application.mainClass
+        }
+    }
+
     test {
         useJUnitPlatform()
     }
