@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public class ProjectSelector extends JFrame {
+    public static JDEDataHandler DATA_HANDLER = new JDEDataHandler();
+
     public ProjectSelector() {
         JPanel content = new JPanel(new BorderLayout());
 
@@ -34,7 +36,7 @@ public class ProjectSelector extends JFrame {
 
             dispose();
             try {
-                Main.DATA_HANDLER.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
+                DATA_HANDLER.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
                 new Editor(chooser.getSelectedFile()).setVisible(true);
             } catch (IOException | ParserConfigurationException | TransformerException e) {
                 throw new RuntimeException(e);
@@ -48,7 +50,7 @@ public class ProjectSelector extends JFrame {
         projectsPanel.setLayout(new BoxLayout(projectsPanel, BoxLayout.Y_AXIS));
 
         try {
-            for (Map.Entry<String, String> project : Main.DATA_HANDLER.getProjects().entrySet()) {
+            for (Map.Entry<String, String> project : DATA_HANDLER.getProjects().entrySet()) {
                 JButton button = createProjectButton(project, MAX_BUTTON_HEIGHT);
 
                 projectsPanel.add(button);

@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClass = "com.imjustdoom.doomsjde.Main"
+    mainClass = "Main"
     applicationDefaultJvmArgs = listOf(
         "-Xmx1g",
         "-XX:+UseCompactObjectHeaders",
