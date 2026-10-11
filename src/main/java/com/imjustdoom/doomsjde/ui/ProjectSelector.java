@@ -86,6 +86,8 @@ public class ProjectSelector extends JFrame {
 
         setMinimumSize(new Dimension(512, 512));
 
+        this.instance.readLogo("icon.png").ifPresent(this::setIconImage);
+
         //this reduces the windows to fit the size of the content, so minimum size above is nice to have.
         pack();
 
