@@ -7,7 +7,6 @@ application {
     mainClass = "Main"
     applicationDefaultJvmArgs = listOf(
         "-Xmx1g",
-        "-XX:+UseCompactObjectHeaders",
         "-Dawt.useSystemAAFontSettings=on",
         "-Dswing.aatext=true",
     )
