@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 
 public class DataHandler {
 
+    private final Path projectsFile;
     private final Logger logger;
     private final Path path;
-    private final Path projectsFile;
 
     private final JsonMapper mapper = JsonMapper.builder()
             .enable(SerializationFeature.INDENT_OUTPUT)
@@ -38,6 +38,14 @@ public class DataHandler {
         } catch (final Exception exception) {
             this.logger.warning("Unable to create %s".formatted(this.path.toString()));
         }
+
+        try {
+            if (!Files.exists(this.projectsFile)) {
+                Files.createFile(this.projectsFile);
+            }
+        } catch (final Exception exception) {
+            this.logger.warning("Unable to create %s".formatted(this.projectsFile.toString()));
+        }
     }
 
     public Map<String, String> getProjects() throws ParserConfigurationException, IOException, SAXException {
@@ -53,14 +61,12 @@ public class DataHandler {
     }
 
     public void addProject(String name, Path projectPath) throws ParserConfigurationException, IOException, SAXException {
-        Map<String, String> projects = new HashMap<>(getProjects());
+        init();
+
+        final Map<String, String> projects = new HashMap<>(getProjects());
+
         projects.put(name, projectPath.toAbsolutePath().toString());
 
-        try {
-            Files.createDirectories(this.projectsFile.getParent());
-            this.mapper.writeValue(this.projectsFile.toFile(), projects);
-        } catch (IOException e) {
-            this.logger.warning("Failed to save projects: " + e.getMessage());
-        }
+        this.mapper.writeValue(this.projectsFile, projects);
     }
 }
