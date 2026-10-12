@@ -45,6 +45,10 @@ public class DataHandler {
             return Collections.emptyMap();
         }
 
+        if (Files.size(this.projectsFile) == 0) {
+            return Collections.emptyMap();
+        }
+
         return this.mapper.readValue(this.projectsFile, new TypeReference<>() {});
     }
 
