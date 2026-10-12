@@ -1,9 +1,10 @@
 package com.imjustdoom.doomsjde.ui;
 
-import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
-import com.imjustdoom.doomsjde.ui.adapters.WindowCloseAdapter;
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.api.files.*;
+import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
+import com.imjustdoom.doomsjde.api.files.GenericReader;
+import com.imjustdoom.doomsjde.api.files.ReadableType;
+import com.imjustdoom.doomsjde.ui.adapters.WindowCloseAdapter;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -20,6 +21,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,6 +37,8 @@ public class ProjectEditor extends JFrame {
             .thenComparing(File::getName, String.CASE_INSENSITIVE_ORDER);
 
     private static final Map<String, ReadableType> READABLE_TYPES = new HashMap<>();
+    private static final int MIN_FONT_SIZE = 6;
+    private static final int MAX_FONT_SIZE = 48;
 
     private final Logger logger;
     private final JDE instance;
@@ -87,7 +91,21 @@ public class ProjectEditor extends JFrame {
         Theme.load(getClass().getResourceAsStream(
                 "/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply(this.textArea);
 
-        this.scrollPane = new RTextScrollPane(this.textArea);
+        this.scrollPane = new RTextScrollPane(this.textArea) {
+            @Override
+            protected void processMouseWheelEvent(MouseWheelEvent e) {
+                if (!e.isControlDown()) {
+                    super.processMouseWheelEvent(e);
+                    return;
+                }
+                int rot = e.getWheelRotation();
+                if (rot == 0) return;
+                Font font = textArea.getFont();
+                int size = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, font.getSize() - rot));
+                textArea.setFont(font.deriveFont((float) size));
+            }
+        };
+
         this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, this.scrollPane);
 
         WorkspaceState workspaceState = this.instance.getDataHandler().getAllWorkspaceData().getOrDefault(directory.getName(), null);
