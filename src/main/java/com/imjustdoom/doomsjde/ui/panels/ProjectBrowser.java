@@ -1,24 +1,20 @@
 package com.imjustdoom.doomsjde.ui.panels;
 
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.api.data.DataHandler;
+import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.ui.objects.Island;
 import org.jspecify.annotations.NonNull;
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.util.logging.Logger;
 
 public class ProjectBrowser extends JFrame {
 
-    private final DataHandler handler;
-    private final Logger logger;
+    private final StorageManager storageManager;
     private final JDE instance;
 
     public ProjectBrowser(@NonNull final JDE instance) {
         this.instance = instance;
-        this.handler = this.instance.getDataHandler();
-        this.logger = this.instance.getLogger();
+        this.storageManager = instance.getStorageManager();
     }
 
     public ProjectBrowser init() {

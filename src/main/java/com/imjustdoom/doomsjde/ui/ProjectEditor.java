@@ -1,6 +1,7 @@
 package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.api.JDE;
+import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
 import com.imjustdoom.doomsjde.api.files.GenericReader;
@@ -41,6 +42,7 @@ public class ProjectEditor extends JFrame {
     private static final int MIN_FONT_SIZE = 6;
     private static final int MAX_FONT_SIZE = 48;
 
+    private final StorageManager storageManager;
     private final Logger logger;
     private final JDE instance;
 
@@ -53,6 +55,7 @@ public class ProjectEditor extends JFrame {
     public ProjectEditor(JDE instance, File directory) throws IOException {
         this.instance = instance;
         this.logger = this.instance.getLogger();
+        this.storageManager = this.instance.getStorageManager();
 
         registerFileTypes(new GenericReader(SyntaxConstants.SYNTAX_STYLE_NONE, "*"),
                 new GenericReader(SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH, "bat"),
@@ -110,13 +113,13 @@ public class ProjectEditor extends JFrame {
 
                 Settings settings = instance.getSettings();
                 settings.zoomLevel = size;
-                instance.getDataHandler().setSettings(settings);
+                storageManager.setSettings(settings);
             }
         };
 
         this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, this.scrollPane);
 
-        WorkspaceState workspaceState = this.instance.getDataHandler().getAllWorkspaceData().getOrDefault(directory.getName(), null);
+        WorkspaceState workspaceState = this.storageManager.getAllWorkspaceData().getOrDefault(directory.getName(), null);
         if (workspaceState == null) {
             // Don't show a blank editor area when a new project is opened with no opened file history
             this.splitPane.setRightComponent(new JLabel("<html><div align='center'>No file selected</div></html>", SwingConstants.CENTER));
@@ -229,7 +232,7 @@ public class ProjectEditor extends JFrame {
         }
 
         this.openFile = file;
-        this.instance.getDataHandler().addWorkspaceState(directory.getName(), new WorkspaceState(file.getAbsolutePath().replace(directory.getAbsolutePath(), "")));
+        this.storageManager.addWorkspaceState(directory.getName(), new WorkspaceState(file.getAbsolutePath().replace(directory.getAbsolutePath(), "")));
     }
 
     private DefaultMutableTreeNode buildFileTree(File directory) {

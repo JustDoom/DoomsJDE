@@ -1,9 +1,9 @@
 package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.api.data.DataHandler;
+import com.imjustdoom.doomsjde.api.data.StorageManager;
+import com.imjustdoom.doomsjde.api.data.objects.project.ProjectTab;
 import org.jspecify.annotations.NonNull;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -15,13 +15,13 @@ import java.util.logging.Logger;
 public class ProjectSelector extends JFrame {
 
     private final JDE instance;
-    private final DataHandler handler;
+    private final StorageManager storageManager;
     private final Logger logger;
 
     public ProjectSelector(@NonNull final JDE instance) {
         this.instance = instance;
-        this.handler = instance.getDataHandler();
-        this.logger = instance.getLogger();
+        this.storageManager = this.instance.getStorageManager();
+        this.logger = this.instance.getLogger();
 
         JPanel content = new JPanel(new BorderLayout());
 
@@ -47,7 +47,7 @@ public class ProjectSelector extends JFrame {
             dispose();
 
             try {
-                this.handler.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
+                this.storageManager.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
 
                 new ProjectEditor(instance, chooser.getSelectedFile()).setVisible(true);
             } catch (IOException e) {
@@ -63,8 +63,10 @@ public class ProjectSelector extends JFrame {
 
         projectsPanel.setLayout(new BoxLayout(projectsPanel, BoxLayout.Y_AXIS));
 
-        for (Map.Entry<String, String> project : this.handler.getProjects().entrySet()) {
-            JButton button = createProjectButton(project, MAX_BUTTON_HEIGHT);
+        for (Map.Entry<String, ProjectTab> project : this.storageManager.getProjects().entrySet()) {
+            final ProjectTab tab = project.getValue();
+
+            JButton button = createProjectButton(tab, MAX_BUTTON_HEIGHT);
 
             projectsPanel.add(button);
         }
@@ -88,13 +90,13 @@ public class ProjectSelector extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    private JButton createProjectButton(Map.Entry<String, String> project, int MAX_BUTTON_HEIGHT) {
-        JButton button = new JButton(project.getKey() + " - " + project.getValue());
+    private JButton createProjectButton(ProjectTab projectTab, int MAX_BUTTON_HEIGHT) {
+        JButton button = new JButton(projectTab.projectName + " - " + projectTab.projectPath);
 
         button.addActionListener(_ -> {
             dispose();
             try {
-                new ProjectEditor(instance, new File(project.getValue())).setVisible(true);
+                new ProjectEditor(instance, new File(projectTab.projectPath)).setVisible(true);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

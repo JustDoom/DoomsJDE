@@ -1,7 +1,7 @@
 package com.imjustdoom.doomsjde.api;
 
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
-import com.imjustdoom.doomsjde.api.data.DataHandler;
+import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.ui.ProjectSelector;
 import org.jspecify.annotations.NullMarked;
@@ -19,22 +19,26 @@ import java.util.logging.Logger;
 @NullMarked
 public final class JDE {
 
-    private final DataHandler dataHandler;
+    private final StorageManager storageManager;
+
     private final Path directory;
     private final Logger logger;
 
     private Settings settings;
 
     public JDE() {
-        this.dataHandler = new DataHandler(this.logger = Logger.getLogger("JDE"), this.directory = Paths.get(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath(), "/.jde"));
+        this.storageManager = new StorageManager(
+                this.directory = Paths.get(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath(), "./jde"),
+                this.logger = Logger.getLogger("JDE")
+        );
+
+        this.settings = new Settings();
     }
 
     public void init() {
-        this.dataHandler.init();
-        this.settings = this.dataHandler.getSettings();
-        if (this.settings == null) {
-            this.settings = new Settings();
-        }
+        this.storageManager.init();
+
+        this.settings = this.storageManager.getSettings();
 
         FlatDraculaIJTheme.setup();
         SwingUtilities.invokeLater(() -> new ProjectSelector(this).setVisible(true));
@@ -54,8 +58,8 @@ public final class JDE {
         return Optional.ofNullable(image);
     }
 
-    public DataHandler getDataHandler() {
-        return this.dataHandler;
+    public StorageManager getStorageManager() {
+        return this.storageManager;
     }
 
     public Settings getSettings() {
