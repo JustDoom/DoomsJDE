@@ -36,6 +36,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation(libs.jackson)
+    implementation(libs.jacksondatabind)
     implementation(libs.jspecify)
 }
 

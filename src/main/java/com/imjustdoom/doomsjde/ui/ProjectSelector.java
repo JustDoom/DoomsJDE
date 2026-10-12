@@ -4,9 +4,9 @@ import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.DataHandler;
 import org.jspecify.annotations.NonNull;
 import org.xml.sax.SAXException;
+
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class ProjectSelector extends JFrame {
                 this.handler.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
 
                 new ProjectEditor(instance, chooser.getSelectedFile()).setVisible(true);
-            } catch (IOException | ParserConfigurationException | TransformerException e) {
+            } catch (IOException | ParserConfigurationException | SAXException e) {
                 throw new RuntimeException(e);
             }
         });

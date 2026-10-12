@@ -15,6 +15,7 @@ shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 [libraries]
 # https://github.com/fasterxml/jackson-core
 jackson = { module = "tools.jackson.core:jackson-core", version.ref = "jackson"}
+jacksondatabind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson" }
 
 # https://jspecify.dev/docs/using/
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }

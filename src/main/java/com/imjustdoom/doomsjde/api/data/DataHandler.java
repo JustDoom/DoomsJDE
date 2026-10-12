@@ -1,18 +1,11 @@
 package com.imjustdoom.doomsjde.api.data;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,10 +18,16 @@ public class DataHandler {
 
     private final Logger logger;
     private final Path path;
+    private final Path projectsFile;
+
+    private final JsonMapper mapper = JsonMapper.builder()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .build();
 
     public DataHandler(final Logger logger, final Path path) {
         this.logger = logger;
         this.path = path;
+        this.projectsFile = path.resolve("projects.json");
     }
 
     public void init() {
@@ -41,83 +40,23 @@ public class DataHandler {
         }
     }
 
-    private Document readXML(String path) throws ParserConfigurationException, IOException, SAXException {
-        File xmlFile = new File(path);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        try {
-            return builder.parse(xmlFile);
-        } catch (FileNotFoundException _) {
-            return null;
-        }
-    }
-
-    private void saveXML(Document document, String filePath) throws TransformerException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-        DOMSource source = new DOMSource(document);
-        StreamResult result = new StreamResult(new File(filePath));
-        transformer.transform(source, result);
-    }
-
     public Map<String, String> getProjects() throws ParserConfigurationException, IOException, SAXException {
-        Document document = readXML("projects.xml");
-
-        if (document == null) {
+        if (!Files.exists(this.projectsFile)) {
             return Collections.emptyMap();
         }
 
-        Element root = document.getDocumentElement();
-        root.normalize();
-
-        NodeList projects = root.getElementsByTagName("project");
-
-        Map<String, String> projectMap = new HashMap<>(projects.getLength());
-        for (int i = 0; i < projects.getLength(); i++) {
-            Node node = projects.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element project = (Element) node;
-                projectMap.put(project.getAttribute("name"),
-                        project.getElementsByTagName("path").item(0).getTextContent());
-            }
-        }
-        return projectMap;
+        return this.mapper.readValue(this.projectsFile, new TypeReference<>() {});
     }
 
-    public void addProject(String name, Path path) throws ParserConfigurationException, TransformerException {
-        Map<String, String> existingProjects;
+    public void addProject(String name, Path projectPath) throws ParserConfigurationException, IOException, SAXException {
+        Map<String, String> projects = new HashMap<>(getProjects());
+        projects.put(name, projectPath.toAbsolutePath().toString());
+
         try {
-            existingProjects = getProjects();
-        } catch (IOException | SAXException e) {
-            existingProjects = Collections.emptyMap();
+            Files.createDirectories(this.projectsFile.getParent());
+            this.mapper.writeValue(this.projectsFile.toFile(), projects);
+        } catch (IOException e) {
+            this.logger.warning("Failed to save projects: " + e.getMessage());
         }
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.newDocument();
-        Element projects = document.createElement("projects");
-        document.appendChild(projects);
-
-        for (Map.Entry<String, String> entry : existingProjects.entrySet()) {
-            Element project = document.createElement("project");
-            project.setAttribute("name", entry.getKey());
-            projects.appendChild(project);
-
-            Element projectPathElement = document.createElement("path");
-            projectPathElement.setTextContent(entry.getValue());
-            project.appendChild(projectPathElement);
-        }
-
-        Element project = document.createElement("project");
-        project.setAttribute("name", name);
-        projects.appendChild(project);
-
-        Element projectPathElement = document.createElement("path");
-        projectPathElement.setTextContent(String.valueOf(path.toAbsolutePath()));
-        project.appendChild(projectPathElement);
-
-        saveXML(document, "projects.xml");
     }
 }
