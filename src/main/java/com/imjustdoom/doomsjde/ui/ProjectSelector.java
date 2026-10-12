@@ -3,10 +3,8 @@ package com.imjustdoom.doomsjde.ui;
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.DataHandler;
 import org.jspecify.annotations.NonNull;
-import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +50,7 @@ public class ProjectSelector extends JFrame {
                 this.handler.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
 
                 new ProjectEditor(instance, chooser.getSelectedFile()).setVisible(true);
-            } catch (IOException | ParserConfigurationException | SAXException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -65,14 +63,10 @@ public class ProjectSelector extends JFrame {
 
         projectsPanel.setLayout(new BoxLayout(projectsPanel, BoxLayout.Y_AXIS));
 
-        try {
-            for (Map.Entry<String, String> project : this.handler.getProjects().entrySet()) {
-                JButton button = createProjectButton(project, MAX_BUTTON_HEIGHT);
+        for (Map.Entry<String, String> project : this.handler.getProjects().entrySet()) {
+            JButton button = createProjectButton(project, MAX_BUTTON_HEIGHT);
 
-                projectsPanel.add(button);
-            }
-        } catch (IOException exception) {
-            this.logger.severe(exception.getMessage());
+            projectsPanel.add(button);
         }
 
         JScrollPane scrollableProjects = new JScrollPane(projectsPanel);

@@ -2,6 +2,7 @@ package com.imjustdoom.doomsjde.api;
 
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 import com.imjustdoom.doomsjde.api.data.DataHandler;
+import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.ui.ProjectSelector;
 import org.jspecify.annotations.NullMarked;
 import javax.imageio.ImageIO;
@@ -22,12 +23,18 @@ public final class JDE {
     private final Path directory;
     private final Logger logger;
 
+    private Settings settings;
+
     public JDE() {
         this.dataHandler = new DataHandler(this.logger = Logger.getLogger("JDE"), this.directory = Paths.get(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath(), "/.jde"));
     }
 
     public void init() {
         this.dataHandler.init();
+        this.settings = this.dataHandler.getSettings();
+        if (this.settings == null) {
+            this.settings = new Settings();
+        }
 
         FlatDraculaIJTheme.setup();
         SwingUtilities.invokeLater(() -> new ProjectSelector(this).setVisible(true));
@@ -49,6 +56,10 @@ public final class JDE {
 
     public DataHandler getDataHandler() {
         return this.dataHandler;
+    }
+
+    public Settings getSettings() {
+        return this.settings;
     }
 
     public Logger getLogger() {

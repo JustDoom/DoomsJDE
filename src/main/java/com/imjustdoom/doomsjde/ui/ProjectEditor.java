@@ -1,6 +1,7 @@
 package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.api.JDE;
+import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
 import com.imjustdoom.doomsjde.api.files.GenericReader;
 import com.imjustdoom.doomsjde.api.files.ReadableType;
@@ -77,7 +78,7 @@ public class ProjectEditor extends JFrame {
         DefaultMutableTreeNode root = buildFileTree(directory);
 
         this.textArea = new RSyntaxTextArea(20, 60);
-        this.textArea.setFont(new Font("JetBrainsMono NFM", Font.PLAIN, 24));
+
         this.textArea.setCodeFoldingEnabled(true);
         this.textArea.setInsertPairedCharacters(true);
         this.textArea.setCloseCurlyBraces(true);
@@ -91,6 +92,9 @@ public class ProjectEditor extends JFrame {
         Theme.load(getClass().getResourceAsStream(
                 "/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply(this.textArea);
 
+        // Apply this after the theme otherwise it is overridden
+        this.textArea.setFont(new Font("JetBrainsMono NFM", Font.PLAIN, this.instance.getSettings().zoomLevel));
+
         this.scrollPane = new RTextScrollPane(this.textArea) {
             @Override
             protected void processMouseWheelEvent(MouseWheelEvent e) {
@@ -103,6 +107,10 @@ public class ProjectEditor extends JFrame {
                 Font font = textArea.getFont();
                 int size = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, font.getSize() - rot));
                 textArea.setFont(font.deriveFont((float) size));
+
+                Settings settings = instance.getSettings();
+                settings.zoomLevel = size;
+                instance.getDataHandler().setSettings(settings);
             }
         };
 
@@ -221,9 +229,7 @@ public class ProjectEditor extends JFrame {
         }
 
         this.openFile = file;
-        try {
-            this.instance.getDataHandler().addWorkspaceState(directory.getName(), new WorkspaceState(file.getAbsolutePath().replace(directory.getAbsolutePath(), "")));
-        } catch (IOException _) {}
+        this.instance.getDataHandler().addWorkspaceState(directory.getName(), new WorkspaceState(file.getAbsolutePath().replace(directory.getAbsolutePath(), "")));
     }
 
     private DefaultMutableTreeNode buildFileTree(File directory) {
