@@ -84,6 +84,12 @@ public class ProjectEditor extends JFrame {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, sp);
 
         File[] openFile = new File[1];
+
+        // Don't show a blank editor area when a new project is opened with no opened file history
+        splitPane.setRightComponent(new JLabel("<html><div align='center'>No file selected</div></html>", SwingConstants.CENTER));
+        textArea.setEditable(false);
+        openFile[0] = null;
+
         textArea.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "save");
         textArea.getActionMap().put("save", new AbstractAction() {
             @Override
@@ -106,10 +112,10 @@ public class ProjectEditor extends JFrame {
             @Override
             public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
                 super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-                if (value instanceof DefaultMutableTreeNode) {
-                    Object obj = ((DefaultMutableTreeNode) value).getUserObject();
-                    if (obj instanceof File) {
-                        setText(((File) obj).getName());
+                if (value instanceof DefaultMutableTreeNode node) {
+                    Object obj = node.getUserObject();
+                    if (obj instanceof File file) {
+                        setText((file).getName());
                     }
                 }
                 return this;
