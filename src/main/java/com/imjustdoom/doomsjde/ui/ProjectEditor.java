@@ -23,8 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -45,8 +44,10 @@ public class ProjectEditor extends JFrame {
     private final JDE instance;
 
     private final RTextScrollPane scrollPane;
-    private final JSplitPane splitPane;
+    private final JSplitPane projectEditorSplitPane;
+    private final JSplitPane terminalEditorSplitPlane;
     private final RSyntaxTextArea textArea;
+    private final JTerminal terminal;
     
     private File openFile;
 
@@ -114,12 +115,21 @@ public class ProjectEditor extends JFrame {
             }
         };
 
-        this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, this.scrollPane);
+        this.projectEditorSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, this.scrollPane);
+        this.projectEditorSplitPane.setResizeWeight(0.2);
+        this.projectEditorSplitPane.setOneTouchExpandable(true);
+        this.projectEditorSplitPane.setDividerLocation(200);
+
+        this.terminal = new JTerminal();
+        this.terminal.setEditable(false);
+        this.terminalEditorSplitPlane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.projectEditorSplitPane, this.terminal);
+        this.terminalEditorSplitPlane.setResizeWeight(0.75);
+        this.terminalEditorSplitPlane.setOneTouchExpandable(true);
 
         WorkspaceState workspaceState = this.instance.getDataHandler().getAllWorkspaceData().getOrDefault(directory.getName(), null);
         if (workspaceState == null) {
             // Don't show a blank editor area when a new project is opened with no opened file history
-            this.splitPane.setRightComponent(new JLabel("<html><div align='center'>No file selected</div></html>", SwingConstants.CENTER));
+            this.projectEditorSplitPane.setRightComponent(new JLabel("<html><div align='center'>No file selected</div></html>", SwingConstants.CENTER));
             this.textArea.setEditable(false);
             this.openFile = null;
         } else {
@@ -141,6 +151,38 @@ public class ProjectEditor extends JFrame {
                     JOptionPane.showMessageDialog(ProjectEditor.this, "Unable to save " + openFile.getName() + ": " + ex.getMessage(),
                             "Save failed", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        });
+
+        this.textArea.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK), "run");
+        this.textArea.getActionMap().put("run", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                terminal.setText("");
+                new Thread(() -> {
+                    try {
+                        final String os = System.getProperty("os.name");
+                        ProcessBuilder builder = new ProcessBuilder((os.contains("Windows") ? "gradlew.bat" : "./gradlew"), "run").redirectErrorStream(true);
+
+                        // Grab the Java version that is running the IDE itself
+                        // TODO: Make configurable
+                        String javaHome = System.getProperty("java.home");
+                        if (javaHome != null) {
+                            builder.environment().put("JAVA_HOME", javaHome);
+                        }
+
+                        Process process = builder.start();
+
+                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                terminal.setText(terminal.getText() + "\n" + line);
+                            }
+                        }
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }, "gradle-task").start();
             }
         });
 
@@ -181,13 +223,8 @@ public class ProjectEditor extends JFrame {
         JScrollPane treeScrollPane = new JScrollPane(fileTree);
         treeScrollPane.setPreferredSize(new Dimension(200, 0));
 
-        this.splitPane.setResizeWeight(0.2);
-        this.splitPane.setOneTouchExpandable(true);
-        this.splitPane.setDividerLocation(200);
-
-        this.splitPane.setLeftComponent(treeScrollPane);
-
-        cp.add(this.splitPane, BorderLayout.CENTER);
+        this.projectEditorSplitPane.setLeftComponent(treeScrollPane);
+        cp.add(this.terminalEditorSplitPlane, BorderLayout.CENTER);
 
         CompletionProvider provider = createCompletionProvider();
         AutoCompletion ac = new AutoCompletion(provider);
@@ -212,7 +249,7 @@ public class ProjectEditor extends JFrame {
         ReadableType readableType = READABLE_TYPES.getOrDefault(split[split.length - 1].toLowerCase(),  READABLE_TYPES.get("*"));
 
         try {
-            this.splitPane.setRightComponent(this.scrollPane);
+            this.projectEditorSplitPane.setRightComponent(this.scrollPane);
             this.textArea.setText(readableType.readFile(file));
             this.textArea.setCaretPosition(0);
             this.textArea.setSyntaxEditingStyle(readableType.getSyntaxHighlighter());
@@ -222,7 +259,7 @@ public class ProjectEditor extends JFrame {
             final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", file.getName());
             // HTML so the label wraps to the width it's given
             JLabel label = new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER);
-            this.splitPane.setRightComponent(label);
+            this.projectEditorSplitPane.setRightComponent(label);
             this.textArea.setEditable(false);
 
             this.logger.severe(text);
