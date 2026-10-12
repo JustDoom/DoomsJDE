@@ -71,7 +71,7 @@ public class ProjectSelector extends JFrame {
 
                 projectsPanel.add(button);
             }
-        } catch (ParserConfigurationException | IOException | SAXException exception) {
+        } catch (IOException exception) {
             this.logger.severe(exception.getMessage());
         }
 
