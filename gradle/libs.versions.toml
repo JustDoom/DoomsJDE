@@ -1,6 +1,6 @@
 [versions]
 ## Annotations API
-jspecify = "1.0.0" # https://jspecify.dev/docs/using/
+jspecify = "1.0.1" # https://jspecify.dev/docs/using/
 
 ## Gradle API
 shadow = "9.6.1" # https://github.com/GradleUp/shadow/
