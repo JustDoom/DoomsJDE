@@ -115,6 +115,8 @@ public class ProjectWindow extends JFrame {
 
         setMinimumSize(new Dimension(1024, 1024)); // temporary dimension size
 
+        this.instance.readLogo("icon.png").ifPresent(this::setIconImage);
+
         //Do nothing, so we can re-open the projects window
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
