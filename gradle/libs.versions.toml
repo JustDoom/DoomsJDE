@@ -8,6 +8,15 @@ shadow = "9.6.1" # https://github.com/GradleUp/shadow/
 ## File API
 jackson = "3.2.3" # https://github.com/fasterxml/jackson-core
 
+fifesoft-syntax = "4.0.1"
+fifesoft-spellchecker = "3.4.1"
+fifesoft-autocomplete = "4.0.0"
+fifesoft-rstaui = "4.0.0"
+
+formdev-flatlaf = "3.7.2"
+
+junit-bom = "6.1.3"
+
 [plugins]
 # https://github.com/GradleUp/shadow
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
@@ -19,3 +28,31 @@ jacksondatabind = { module = "tools.jackson.core:jackson-databind", version.ref 
 
 # https://jspecify.dev/docs/using/
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+
+fifesoft-autocomplete = { module = "com.fifesoft:autocomplete", version.ref = "fifesoft-autocomplete" }
+fifesoft-spellchecker = { module = "com.fifesoft:spellchecker", version.ref = "fifesoft-spellchecker" }
+fifesoft-syntax = { module = "com.fifesoft:rsyntaxtextarea", version.ref = "fifesoft-syntax" }
+fifesoft-rstaui = { module = "com.fifesoft:rstaui", version.ref = "fifesoft-rstaui" }
+
+formdev-flatlaf-intellij = { module = "com.formdev:flatlaf-intellij-themes", version.ref = "formdev-flatlaf" }
+formdev-flatlaf = { module = "com.formdev:flatlaf", version.ref = "formdev-flatlaf" }
+
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit-bom" }
+
+[bundles]
+formdev = [
+    "formdev-flatlaf-intellij",
+    "formdev-flatlaf"
+]
+
+fifesoft = [
+    "fifesoft-autocomplete",
+    "fifesoft-spellchecker",
+    "fifesoft-syntax",
+    "fifesoft-rstaui"
+]
+
+jackson = [
+    "jacksondatabind",
+    "jackson"
+]
