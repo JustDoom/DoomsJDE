@@ -28,7 +28,7 @@ public final class JDE {
 
     public JDE() {
         this.storageManager = new StorageManager(
-                this.directory = Paths.get(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath(), "./jde"),
+                this.directory = Paths.get(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath(), "/.jde"),
                 this.logger = Logger.getLogger("JDE")
         );
 

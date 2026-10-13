@@ -2,17 +2,9 @@ package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
-import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
-import com.imjustdoom.doomsjde.api.files.GenericReader;
-import com.imjustdoom.doomsjde.api.files.ReadableType;
 import com.imjustdoom.doomsjde.ui.adapters.WindowCloseAdapter;
 import org.fife.ui.autocomplete.*;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rsyntaxtextarea.Theme;
-import org.fife.ui.rsyntaxtextarea.spell.SpellingParser;
-import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -23,13 +15,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseWheelEvent;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class ProjectEditor extends JFrame {
@@ -37,88 +30,27 @@ public class ProjectEditor extends JFrame {
             .comparing(File::isFile)
             .thenComparing(File::getName, String.CASE_INSENSITIVE_ORDER);
 
-    private static final Map<String, ReadableType> READABLE_TYPES = new HashMap<>();
-    private static final int MIN_FONT_SIZE = 6;
-    private static final int MAX_FONT_SIZE = 48;
-
     private final StorageManager storageManager;
     private final Logger logger;
     private final JDE instance;
 
-    private final RTextScrollPane scrollPane;
     private final JSplitPane projectEditorSplitPane;
     private final JSplitPane terminalEditorSplitPlane;
-    private final RSyntaxTextArea textArea;
+    private final JEditor editor;
     private final JTerminal terminal;
-    
-    private File openFile;
 
     public ProjectEditor(JDE instance, File directory) throws IOException {
         this.instance = instance;
         this.logger = this.instance.getLogger();
         this.storageManager = this.instance.getStorageManager();
 
-        registerFileTypes(new GenericReader(SyntaxConstants.SYNTAX_STYLE_NONE, "*"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH, "bat"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_CSV, "csv"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_DOCKERFILE, "dockerfile"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_ENV, "env"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_INI, "ini"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_JAVA, "java"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_JSON, "json"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_KOTLIN, "kt", "kts"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_MARKDOWN, "md"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_POWERSHELL, "ps1"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE, "properties"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_SQL, "sql"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_XML, "xml"),
-                new GenericReader(SyntaxConstants.SYNTAX_STYLE_YAML, "yml", "yaml"));
-
-        File zip = new File("english_dic.zip");
-        SpellingParser parser = SpellingParser.createEnglishSpellingParser(zip, true);
-
-        JPanel cp = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout());
 
         DefaultMutableTreeNode root = buildFileTree(directory);
 
-        this.textArea = new RSyntaxTextArea(20, 60);
+        this.editor = new JEditor(this.instance);
 
-        this.textArea.setCodeFoldingEnabled(true);
-        this.textArea.setInsertPairedCharacters(true);
-        this.textArea.setCloseCurlyBraces(true);
-        this.textArea.setMarginLineEnabled(true);
-        this.textArea.setMarginLinePosition(80);
-        this.textArea.setCodeFoldingEnabled(true);
-
-        this.textArea.addParser(parser);
-
-        // RSyntaxTextArea ignores the LaF. It has its own theme system
-        Theme.load(getClass().getResourceAsStream(
-                "/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply(this.textArea);
-
-        // Apply this after the theme otherwise it is overridden
-        this.textArea.setFont(new Font("JetBrainsMono NFM", Font.PLAIN, this.instance.getSettings().zoomLevel));
-
-        this.scrollPane = new RTextScrollPane(this.textArea) {
-            @Override
-            protected void processMouseWheelEvent(MouseWheelEvent e) {
-                if (!e.isControlDown()) {
-                    super.processMouseWheelEvent(e);
-                    return;
-                }
-                int rot = e.getWheelRotation();
-                if (rot == 0) return;
-                Font font = textArea.getFont();
-                int size = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, font.getSize() - rot));
-                textArea.setFont(font.deriveFont((float) size));
-
-                Settings settings = instance.getSettings();
-                settings.zoomLevel = size;
-                storageManager.setSettings(settings);
-            }
-        };
-
-        this.projectEditorSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, this.scrollPane);
+        this.projectEditorSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, null, this.editor);
         this.projectEditorSplitPane.setResizeWeight(0.2);
         this.projectEditorSplitPane.setOneTouchExpandable(true);
         this.projectEditorSplitPane.setDividerLocation(200);
@@ -129,36 +61,30 @@ public class ProjectEditor extends JFrame {
         this.terminalEditorSplitPlane.setResizeWeight(0.75);
         this.terminalEditorSplitPlane.setOneTouchExpandable(true);
 
-        WorkspaceState workspaceState = this.storageManager.getAllWorkspaceData().getOrDefault(directory.getName(), null);
+        // I don't like this, clean it up later
+        WorkspaceState workspaceState = this.storageManager.getAllWorkspaceData().get(directory.getName());
         if (workspaceState == null) {
             // Don't show a blank editor area when a new project is opened with no opened file history
             this.projectEditorSplitPane.setRightComponent(new JLabel("<html><div align='center'>No file selected</div></html>", SwingConstants.CENTER));
-            this.textArea.setEditable(false);
-            this.openFile = null;
         } else {
-            setEditorFile(directory, new File(directory.getAbsoluteFile() + workspaceState.lastFile()));
+            Path path = Path.of(directory.getAbsoluteFile() + workspaceState.lastFile());
+            if (Files.exists(path)) {
+                try {
+                    this.editor.setEditorFile(directory, path.toFile());
+                    this.projectEditorSplitPane.setRightComponent(this.editor);
+                } catch (IOException exception) {
+                    final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", path.getFileName());
+                    this.projectEditorSplitPane.setRightComponent(new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER));
+                    this.logger.severe(text);
+                }
+            } else {
+                final String text = String.format("Unable to find the file '%s' :(\nPlease make sure it exists", path.toAbsolutePath());
+                this.projectEditorSplitPane.setRightComponent(new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER));
+            }
         }
 
-        this.textArea.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "save");
-        this.textArea.getActionMap().put("save", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // If the textArea is not editable, it is not a file that can be saved either
-                if (openFile == null || !textArea.isEditable()) {
-                    return;
-                }
-
-                try {
-                    Files.writeString(openFile.toPath(), textArea.getText());
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(ProjectEditor.this, "Unable to save " + openFile.getName() + ": " + ex.getMessage(),
-                            "Save failed", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        this.textArea.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK), "run");
-        this.textArea.getActionMap().put("run", new AbstractAction() {
+        getRootPane().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK), "run");
+        getRootPane().getActionMap().put("run", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 terminal.setText("");
@@ -219,7 +145,17 @@ public class ProjectEditor extends JFrame {
                 return;
             }
 
-            setEditorFile(directory, file);
+            try {
+                this.editor.setEditorFile(directory, file);
+                this.projectEditorSplitPane.setRightComponent(this.editor);
+            } catch (IOException exception) {
+                // Unable to read the file type :(
+                final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", file.getName());
+                // HTML so the label wraps to the width it's given
+                JLabel label = new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER);
+                this.projectEditorSplitPane.setRightComponent(label);
+                this.logger.severe(text);
+            }
         });
 
         fileTree.setRootVisible(true);
@@ -227,15 +163,9 @@ public class ProjectEditor extends JFrame {
         treeScrollPane.setPreferredSize(new Dimension(200, 0));
 
         this.projectEditorSplitPane.setLeftComponent(treeScrollPane);
-        cp.add(this.terminalEditorSplitPlane, BorderLayout.CENTER);
+        panel.add(this.terminalEditorSplitPlane, BorderLayout.CENTER);
 
-        CompletionProvider provider = createCompletionProvider();
-        AutoCompletion ac = new AutoCompletion(provider);
-        ac.setAutoActivationEnabled(true);
-        ac.setAutoActivationDelay(200);
-        ac.install(this.textArea);
-
-        setContentPane(cp);
+        setContentPane(panel);
         setTitle("Dooms JDE");
 
         //Do nothing, so we can re-open the projects window
@@ -245,31 +175,6 @@ public class ProjectEditor extends JFrame {
 
         pack();
         setLocationRelativeTo(null);
-    }
-
-    private void setEditorFile(File directory, File file) {
-        String[] split = file.getName().split("\\.");
-        ReadableType readableType = READABLE_TYPES.getOrDefault(split[split.length - 1].toLowerCase(),  READABLE_TYPES.get("*"));
-
-        try {
-            this.projectEditorSplitPane.setRightComponent(this.scrollPane);
-            this.textArea.setText(readableType.readFile(file));
-            this.textArea.setCaretPosition(0);
-            this.textArea.setSyntaxEditingStyle(readableType.getSyntaxHighlighter());
-            this.textArea.setEditable(true);
-        } catch (IOException ex) {
-            // Unable to read the file type :(
-            final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", file.getName());
-            // HTML so the label wraps to the width it's given
-            JLabel label = new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER);
-            this.projectEditorSplitPane.setRightComponent(label);
-            this.textArea.setEditable(false);
-
-            this.logger.severe(text);
-        }
-
-        this.openFile = file;
-        this.storageManager.addWorkspaceState(directory.getName(), new WorkspaceState(file.getAbsolutePath().replace(directory.getAbsolutePath(), "")));
     }
 
     private DefaultMutableTreeNode buildFileTree(File directory) {
@@ -298,37 +203,5 @@ public class ProjectEditor extends JFrame {
             }
         }
         return root;
-    }
-
-    private CompletionProvider createCompletionProvider() {
-        DefaultCompletionProvider provider = new DefaultCompletionProvider();
-        provider.setAutoActivationRules(true, ".");
-
-        provider.addCompletion(new BasicCompletion(provider, "abstract"));
-        provider.addCompletion(new BasicCompletion(provider, "assert"));
-        provider.addCompletion(new BasicCompletion(provider, "break"));
-        provider.addCompletion(new BasicCompletion(provider, "case"));
-        provider.addCompletion(new BasicCompletion(provider, "transient"));
-        provider.addCompletion(new BasicCompletion(provider, "try"));
-        provider.addCompletion(new BasicCompletion(provider, "void"));
-        provider.addCompletion(new BasicCompletion(provider, "volatile"));
-        provider.addCompletion(new BasicCompletion(provider, "while"));
-
-        provider.addCompletion(new ShorthandCompletion(provider, "sout", "System.out.println();", "System.out.println();"));
-        provider.addCompletion(new ShorthandCompletion(provider, "serr", "System.err.println();", "System.err.println();"));
-
-        return provider;
-    }
-
-    private static void registerFileTypes(ReadableType... readableTypes) {
-        for (ReadableType readableType : readableTypes) {
-            registerFileType(readableType);
-        }
-    }
-
-    private static void registerFileType(ReadableType readableType) {
-        for (String fileType : readableType.recognisedFileTypes()) {
-            READABLE_TYPES.put(fileType, readableType);
-        }
     }
 }
