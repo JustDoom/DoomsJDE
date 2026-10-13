@@ -3,7 +3,7 @@ package com.imjustdoom.doomsjde.api;
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.Settings;
-import com.imjustdoom.doomsjde.ui.ProjectSelector;
+import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
 import org.jspecify.annotations.NullMarked;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -40,7 +40,7 @@ public final class JDE {
         this.settings = this.storageManager.getSettings();
 
         FlatDraculaIJTheme.setup();
-        SwingUtilities.invokeLater(() -> new ProjectSelector(this).setVisible(true));
+        SwingUtilities.invokeLater(() -> new ProjectBrowser(this).init().setVisible(true));
     }
 
     public Optional<BufferedImage> readLogo(final String path) {
