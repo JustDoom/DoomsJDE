@@ -113,6 +113,8 @@ public class ProjectWindow extends JFrame {
         setContentPane(panel);
         setTitle("Dooms JDE");
 
+        setMinimumSize(new Dimension(1024, 1024)); // temporary dimension size
+
         //Do nothing, so we can re-open the projects window
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
