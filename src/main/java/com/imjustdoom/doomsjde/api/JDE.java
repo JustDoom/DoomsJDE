@@ -7,8 +7,8 @@ import com.imjustdoom.doomsjde.ui.ProjectSelector;
 import org.jspecify.annotations.NullMarked;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -28,7 +28,7 @@ public final class JDE {
 
     public JDE() {
         this.storageManager = new StorageManager(
-                this.directory = Paths.get(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath(), "/.jde"),
+                this.directory = Paths.get(System.getProperty("user.home")).resolve("%s.jde".formatted(File.separator)),
                 this.logger = Logger.getLogger("JDE")
         );
 
