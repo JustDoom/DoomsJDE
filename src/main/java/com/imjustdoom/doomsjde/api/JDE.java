@@ -8,7 +8,6 @@ import org.jspecify.annotations.NullMarked;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -28,7 +27,7 @@ public final class JDE {
 
     public JDE() {
         this.storageManager = new StorageManager(
-                this.directory = Paths.get(System.getProperty("user.home")).resolve("%s.jde".formatted(File.separator)),
+                this.directory = Paths.get(System.getProperty("user.home")).resolve(".jde"),
                 this.logger = Logger.getLogger("JDE")
         );
 
