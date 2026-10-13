@@ -1,4 +1,4 @@
-package com.imjustdoom.doomsjde.ui;
+package com.imjustdoom.doomsjde.ui.objects;
 
 import javax.swing.*;
 

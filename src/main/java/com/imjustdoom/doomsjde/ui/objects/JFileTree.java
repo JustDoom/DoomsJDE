@@ -1,4 +1,4 @@
-package com.imjustdoom.doomsjde.ui.panels;
+package com.imjustdoom.doomsjde.ui.objects;
 
 import com.imjustdoom.doomsjde.ui.ProjectWindow;
 
