@@ -4,13 +4,9 @@ import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
 import com.imjustdoom.doomsjde.ui.adapters.WindowCloseAdapter;
-import org.fife.ui.autocomplete.*;
+import com.imjustdoom.doomsjde.ui.panels.JFileTree;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -21,15 +17,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.logging.Logger;
 
-public class ProjectEditor extends JFrame {
-    private static final Comparator<File> TREE_ORDER = Comparator
-            .comparing(File::isFile)
-            .thenComparing(File::getName, String.CASE_INSENSITIVE_ORDER);
-
+public class ProjectWindow extends JFrame {
     private final StorageManager storageManager;
     private final Logger logger;
     private final JDE instance;
@@ -39,14 +29,12 @@ public class ProjectEditor extends JFrame {
     private final JEditor editor;
     private final JTerminal terminal;
 
-    public ProjectEditor(JDE instance, File directory) throws IOException {
+    public ProjectWindow(JDE instance, File directory) throws IOException {
         this.instance = instance;
         this.logger = this.instance.getLogger();
         this.storageManager = this.instance.getStorageManager();
 
         JPanel panel = new JPanel(new BorderLayout());
-
-        DefaultMutableTreeNode root = buildFileTree(directory);
 
         this.editor = new JEditor(this.instance);
 
@@ -115,54 +103,9 @@ public class ProjectEditor extends JFrame {
             }
         });
 
-        JTree fileTree = new JTree(new DefaultTreeModel(root));
-        fileTree.setCellRenderer(new DefaultTreeCellRenderer() {
-            @Override
-            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-                super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-                if (value instanceof DefaultMutableTreeNode node) {
-                    Object obj = node.getUserObject();
-                    if (obj instanceof File file) {
-                        setText((file).getName());
-                    }
-                }
-                return this;
-            }
-        });
-        fileTree.addTreeSelectionListener(e -> {
-            if (!e.isAddedPath()) {
-                return;
-            }
-
-            TreePath path = fileTree.getSelectionPath();
-            if (path == null) {
-                return;
-            }
-
-            // Convert the path to the actual TreeNode
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (!(node.getUserObject() instanceof File file) || file.isDirectory()) {
-                return;
-            }
-
-            try {
-                this.editor.setEditorFile(directory, file);
-                this.projectEditorSplitPane.setRightComponent(this.editor);
-            } catch (IOException exception) {
-                // Unable to read the file type :(
-                final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", file.getName());
-                // HTML so the label wraps to the width it's given
-                JLabel label = new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER);
-                this.projectEditorSplitPane.setRightComponent(label);
-                this.logger.severe(text);
-            }
-        });
-
-        fileTree.setRootVisible(true);
-        JScrollPane treeScrollPane = new JScrollPane(fileTree);
-        treeScrollPane.setPreferredSize(new Dimension(200, 0));
-
-        this.projectEditorSplitPane.setLeftComponent(treeScrollPane);
+        JFileTree fileTree = new JFileTree(this, directory);
+        fileTree.init();
+        this.projectEditorSplitPane.setLeftComponent(fileTree);
         panel.add(this.terminalEditorSplitPlane, BorderLayout.CENTER);
 
         setContentPane(panel);
@@ -177,31 +120,17 @@ public class ProjectEditor extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    private DefaultMutableTreeNode buildFileTree(File directory) {
-        return buildFileTree(directory, directory.getName());
-    }
-
-    private DefaultMutableTreeNode buildFileTree(File directory, String path) {
-        File[] children = directory.listFiles();
-        if (children == null || children.length == 0) {
-            return new DefaultMutableTreeNode(path);
+    public void setEditorFile(File directory, File file) {
+        try {
+            this.editor.setEditorFile(directory, file);
+            this.projectEditorSplitPane.setRightComponent(this.editor);
+        } catch (IOException exception) {
+            // Unable to read the file type :(
+            final String text = String.format("Unable to read the file '%s', it will need a Reader written for it or will remain unsupported", file.getName());
+            // HTML so the label wraps to the width it's given
+            JLabel label = new JLabel("<html><div align='center'>" + text + "</div></html>", SwingConstants.CENTER);
+            this.projectEditorSplitPane.setRightComponent(label);
+            this.logger.severe(text);
         }
-
-        Arrays.sort(children, TREE_ORDER);
-
-        if (children.length == 1 && children[0].isDirectory()) {
-            File child = children[0];
-            return buildFileTree(child, path + "/" + child.getName());
-        }
-
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(path);
-        for (File child : children) {
-            if (child.isDirectory()) {
-                root.add(buildFileTree(child));
-            } else {
-                root.add(new DefaultMutableTreeNode(child));
-            }
-        }
-        return root;
     }
 }

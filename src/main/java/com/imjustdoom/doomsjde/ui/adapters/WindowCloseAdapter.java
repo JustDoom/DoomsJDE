@@ -1,6 +1,6 @@
 package com.imjustdoom.doomsjde.ui.adapters;
 
-import com.imjustdoom.doomsjde.ui.ProjectEditor;
+import com.imjustdoom.doomsjde.ui.ProjectWindow;
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.ui.ProjectSelector;
 import javax.swing.*;
@@ -10,9 +10,9 @@ import java.awt.event.WindowEvent;
 public class WindowCloseAdapter extends WindowAdapter {
 
     private final JDE instance;
-    private final ProjectEditor editor;
+    private final ProjectWindow editor;
 
-    public WindowCloseAdapter(final JDE instance, final ProjectEditor editor) {
+    public WindowCloseAdapter(final JDE instance, final ProjectWindow editor) {
         this.instance = instance;
         this.editor = editor;
     }

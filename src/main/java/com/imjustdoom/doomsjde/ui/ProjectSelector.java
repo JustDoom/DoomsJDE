@@ -49,7 +49,7 @@ public class ProjectSelector extends JFrame {
             try {
                 this.storageManager.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
 
-                new ProjectEditor(instance, chooser.getSelectedFile()).setVisible(true);
+                new ProjectWindow(instance, chooser.getSelectedFile()).setVisible(true);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -96,7 +96,7 @@ public class ProjectSelector extends JFrame {
         button.addActionListener(_ -> {
             dispose();
             try {
-                new ProjectEditor(instance, new File(projectTab.projectPath)).setVisible(true);
+                new ProjectWindow(instance, new File(projectTab.projectPath)).setVisible(true);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
