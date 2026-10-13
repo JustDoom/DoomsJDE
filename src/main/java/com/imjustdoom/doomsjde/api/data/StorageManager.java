@@ -32,7 +32,7 @@ public class StorageManager extends IStorageManager {
     public void addProject(final String name, final Path projectPath) {
         init();
 
-        final Map<String, ProjectTab> projects = getProjects();
+        final Map<String, ProjectTab> projects = new HashMap<>(getProjects());
 
         final ProjectTab project = new ProjectTab();
 
