@@ -49,6 +49,7 @@ public class StorageManager extends IStorageManager {
 
     }
 
+    @Override
     public Map<String, ProjectTab> getProjects() {
         if (!Files.exists(this.projectPath)) {
             return Collections.emptyMap();
