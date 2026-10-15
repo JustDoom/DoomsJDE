@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     application
+    alias(libs.plugins.shadow)
 }
 
 application {
@@ -38,6 +39,14 @@ tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(27)
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
+    shadowJar {
+        mergeServiceFiles()
     }
 
     jar {
