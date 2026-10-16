@@ -1,6 +1,6 @@
 package com.imjustdoom.doomsjde.ui.panels;
 
-import com.imjustdoom.doomsjde.ui.ImageIcons;
+import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.ui.ProjectWindow;
