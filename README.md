@@ -14,11 +14,11 @@ We want to make it a viable option ASAP so that the IDE can be developed inside 
 This is a basic feature list we aim to target, but does not include everything that we want or will be added
 - [x] Basic edit abilities
 - [x] Basic project viewer
-- [ ] Settings menu
+- [x] Settings menu
 - [x] Basic project selector
 - [ ] Keybinds
 - [ ] Terminal/Log output
-- [ ] Built in program run
+- [x] Built in program run
 - [ ] Proper context aware tab complete
 - [ ] Find/Replace
 - [ ] Debugger/breakpoints
