@@ -8,10 +8,16 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -51,8 +57,14 @@ public class JFileTree extends JScrollPane {
                 super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
                 if (value instanceof DefaultMutableTreeNode node) {
                     Object obj = node.getUserObject();
-                    if (obj instanceof File file) {
-                        setText((file).getName());
+                    if (!(obj instanceof File file)) return this;
+
+                    setText((file).getName());
+
+                    if (file.isDirectory()) {
+                        setIcon(UIManager.getIcon("FileView.directoryIcon"));
+                    } else {
+                        setIcon(UIManager.getIcon("FileView.fileIcon"));
                     }
                 }
                 return this;
