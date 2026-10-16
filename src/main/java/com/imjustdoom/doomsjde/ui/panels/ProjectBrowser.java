@@ -1,5 +1,6 @@
 package com.imjustdoom.doomsjde.ui.panels;
 
+import com.imjustdoom.doomsjde.ui.ImageIcons;
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.ui.ProjectWindow;
@@ -98,7 +99,7 @@ public class ProjectBrowser extends JFrame {
 
         setMinimumSize(new Dimension(512, 512));
 
-        this.instance.readLogo("icon.png").ifPresent(this::setIconImage);
+        this.instance.readLogo(ImageIcons.LOGO).ifPresent(this::setIconImage);
 
         //this reduces the windows to fit the size of the content, so minimum size above is nice to have.
         pack();

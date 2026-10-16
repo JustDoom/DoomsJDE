@@ -3,6 +3,7 @@ package com.imjustdoom.doomsjde.api;
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.Settings;
+import com.imjustdoom.doomsjde.ui.ImageIcons;
 import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
 import org.jspecify.annotations.NullMarked;
 import javax.imageio.ImageIO;
@@ -43,10 +44,10 @@ public final class JDE {
         SwingUtilities.invokeLater(() -> new ProjectBrowser(this).init().setVisible(true));
     }
 
-    public Optional<BufferedImage> readLogo(final String path) {
+    public Optional<BufferedImage> readLogo(final ImageIcons icon) {
         BufferedImage image = null;
 
-        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path)) {
+        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(icon.getPath() + ".png")) {
             if (inputStream != null) {
                 image = ImageIO.read(inputStream);
             }
