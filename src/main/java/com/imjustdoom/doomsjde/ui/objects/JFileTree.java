@@ -185,7 +185,13 @@ public class JFileTree extends JScrollPane {
         Path target = directory.toPath().resolve(relative).normalize();
 
         try {
+            if (Files.exists(target)) {
+                throw new FileAlreadyExistsException("The directory already exists");
+            }
             Files.createDirectories(target);
+        } catch (FileAlreadyExistsException exception) {
+            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), "Directory already exists");
+            return;
         } catch (IOException exception) {
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), "An error occurred :(");
             exception.printStackTrace();
