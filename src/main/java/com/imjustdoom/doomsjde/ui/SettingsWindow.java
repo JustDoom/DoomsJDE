@@ -69,7 +69,7 @@ public class SettingsWindow extends JFrame {
         this.instance.getStorageManager().setSettings(settings);
         this.logger.info("Settings saved");
 
-        JOptionPane.showMessageDialog(null, "Please restart or re-open the project for the changes to be applied :)");
+        JOptionPane.showMessageDialog(this, "Please restart or re-open the project for the changes to be applied :)");
     }
 
     private JPanel buildSettings() {

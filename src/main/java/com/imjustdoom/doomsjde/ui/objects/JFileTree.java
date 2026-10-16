@@ -135,7 +135,7 @@ public class JFileTree extends JScrollPane {
         try {
             relative = Path.of(name);
         } catch (InvalidPathException exception) {
-            JOptionPane.showMessageDialog(null, "Invalid path: " + name);
+            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), "Invalid path: " + name);
             return;
         }
 
@@ -147,10 +147,10 @@ public class JFileTree extends JScrollPane {
             }
             Files.createFile(target);
         } catch (FileAlreadyExistsException exception) {
-            JOptionPane.showMessageDialog(null, "File already exists");
+            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), "File already exists");
             return;
         } catch (IOException exception) {
-            JOptionPane.showMessageDialog(null, "An error occurred :(");
+            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), "An error occurred :(");
             exception.printStackTrace();
             return;
         }
@@ -178,7 +178,7 @@ public class JFileTree extends JScrollPane {
         try {
             relative = Path.of(name);
         } catch (InvalidPathException exception) {
-            JOptionPane.showMessageDialog(null, "Invalid path: " + name);
+            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), "Invalid path: " + name);
             return;
         }
 
@@ -187,7 +187,7 @@ public class JFileTree extends JScrollPane {
         try {
             Files.createDirectories(target);
         } catch (IOException exception) {
-            JOptionPane.showMessageDialog(null, "An error occurred :(");
+            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), "An error occurred :(");
             exception.printStackTrace();
             return;
         }
