@@ -8,8 +8,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
@@ -81,6 +80,16 @@ public class JFileTree extends JScrollPane {
         this.fileTree.setRootVisible(true);
 
         setPreferredSize(new Dimension(200, 0));
+
+        this.fileTree.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
+        this.fileTree.getActionMap().put("delete", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) fileTree.getLastSelectedPathComponent();
+                File object = (File) node.getUserObject();
+                delete(node, object);
+            }
+        });
     }
 
     // Loads and builds the file tree
