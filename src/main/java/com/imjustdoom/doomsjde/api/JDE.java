@@ -8,6 +8,7 @@ import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
 import org.jspecify.annotations.NullMarked;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,23 @@ public final class JDE {
         this.settings = this.storageManager.getSettings();
 
         FlatDraculaIJTheme.setup();
+
+        final String selectedFont = "JetBrains Mono"; // Will hook this up to settings later
+        boolean hasFont = false;
+        String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        for (String f : fonts) {
+            if (f.equals(selectedFont)) {
+                hasFont = true;
+                break;
+            }
+        }
+
+        if (!hasFont) {
+            JOptionPane.showMessageDialog(null, "Unable to find the font '" + selectedFont + "', a default font will be used.");
+        }
+
+        UIManager.put("defaultFont", new Font(selectedFont, Font.PLAIN, 14));
+
         SwingUtilities.invokeLater(() -> new ProjectBrowser(this).init().setVisible(true));
     }
 

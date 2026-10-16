@@ -120,7 +120,7 @@ public class JEditor extends RTextScrollPane {
                 "/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply(this.textArea);
 
         // Apply this after the theme otherwise it is overridden
-        this.textArea.setFont(new Font("JetBrainsMono NFM", Font.PLAIN, this.instance.getSettings().zoomLevel));
+        this.textArea.setFont(this.textArea.getFont().deriveFont((float) this.instance.getSettings().zoomLevel));
     }
 
     private CompletionProvider createCompletionProvider() {
