@@ -57,23 +57,7 @@ public class JEditor extends RTextScrollPane {
         super(textArea); // Can't reference class textArea before super is called
 
         this.textArea = textArea;
-        this.textArea.setCodeFoldingEnabled(true);
-        this.textArea.setInsertPairedCharacters(true);
-        this.textArea.setCloseCurlyBraces(true);
-        this.textArea.setMarginLineEnabled(true);
-        this.textArea.setMarginLinePosition(80);
-        this.textArea.setCodeFoldingEnabled(true);
-
-        File zip = new File("english_dic.zip");
-        SpellingParser parser = SpellingParser.createEnglishSpellingParser(zip, true);
-        this.textArea.addParser(parser);
-
-        // RSyntaxTextArea ignores the LaF. It has its own theme system
-        Theme.load(getClass().getResourceAsStream(
-                "/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply(this.textArea);
-
-        // Apply this after the theme otherwise it is overridden
-        this.textArea.setFont(new Font("JetBrainsMono NFM", Font.PLAIN, this.instance.getSettings().zoomLevel));
+        loadSettings();
 
         // Custom keybinds
         this.textArea.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "save");
@@ -116,6 +100,29 @@ public class JEditor extends RTextScrollPane {
         }
     }
 
+    private void loadSettings() throws IOException {
+        final Settings settings = this.instance.getSettings();
+
+        this.textArea.setCodeFoldingEnabled(true);
+        this.textArea.setInsertPairedCharacters(true);
+        this.textArea.setCloseCurlyBraces(true);
+        this.textArea.setMarginLineEnabled(settings.marginLinePosition != 0);
+        this.textArea.setMarginLinePosition(settings.marginLinePosition);
+        this.textArea.setCodeFoldingEnabled(true);
+        this.textArea.setWhitespaceVisible(settings.visibleWhitespace);
+
+        File zip = new File("english_dic.zip");
+        SpellingParser parser = SpellingParser.createEnglishSpellingParser(zip, true);
+        this.textArea.addParser(parser);
+
+        // RSyntaxTextArea ignores the LaF. It has its own theme system
+        Theme.load(getClass().getResourceAsStream(
+                "/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply(this.textArea);
+
+        // Apply this after the theme otherwise it is overridden
+        this.textArea.setFont(new Font("JetBrainsMono NFM", Font.PLAIN, this.instance.getSettings().zoomLevel));
+    }
+
     private CompletionProvider createCompletionProvider() {
         DefaultCompletionProvider provider = new DefaultCompletionProvider();
         provider.setAutoActivationRules(true, ".");
@@ -156,11 +163,11 @@ public class JEditor extends RTextScrollPane {
         }
         int rot = e.getWheelRotation();
         if (rot == 0) return;
-        Font font = textArea.getFont();
+        Font font = this.textArea.getFont();
         int size = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, font.getSize() - rot));
-        textArea.setFont(font.deriveFont((float) size));
+        this.textArea.setFont(font.deriveFont((float) size));
 
-        Settings settings = instance.getSettings();
+        Settings settings = this.instance.getSettings();
         settings.zoomLevel = size;
         this.instance.getStorageManager().setSettings(settings);
     }

@@ -66,6 +66,8 @@ public class ProjectWindow extends JFrame {
         this.terminalEditorSplitPane.setResizeWeight(0.75);
         this.terminalEditorSplitPane.setOneTouchExpandable(true);
 
+        this.toolbar.add(button("⚙", Color.lightGray, _ -> new SettingsWindow(this.instance).setVisible(true)));
+        this.toolbar.addSeparator();
         this.toolbar.add(button("▶", _ -> runProject()));
 
         panel.add(this.toolbar, BorderLayout.NORTH);
