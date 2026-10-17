@@ -1,4 +1,4 @@
-package com.imjustdoom.doomsjde.api.data.objects.project;
+package com.imjustdoom.doomsjde.api.storage.objects.project;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

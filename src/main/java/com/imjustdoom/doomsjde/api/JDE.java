@@ -1,8 +1,8 @@
 package com.imjustdoom.doomsjde.api;
 
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
-import com.imjustdoom.doomsjde.api.data.StorageManager;
-import com.imjustdoom.doomsjde.api.data.objects.Settings;
+import com.imjustdoom.doomsjde.api.storage.StorageManager;
+import com.imjustdoom.doomsjde.api.storage.objects.Settings;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
 import org.jspecify.annotations.NullMarked;

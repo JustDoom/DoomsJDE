@@ -1,6 +1,6 @@
-package com.imjustdoom.doomsjde.api.data.interfaces;
+package com.imjustdoom.doomsjde.api.storage.interfaces;
 
-import com.imjustdoom.doomsjde.api.data.objects.project.ProjectTab;
+import com.imjustdoom.doomsjde.api.storage.objects.project.ProjectTab;
 import org.jspecify.annotations.NullMarked;
 import java.io.IOException;
 import java.nio.file.Files;

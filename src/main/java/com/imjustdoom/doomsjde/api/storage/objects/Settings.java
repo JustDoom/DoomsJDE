@@ -1,4 +1,4 @@
-package com.imjustdoom.doomsjde.api.data.objects;
+package com.imjustdoom.doomsjde.api.storage.objects;
 
 public class Settings {
     public int zoomLevel = 14;

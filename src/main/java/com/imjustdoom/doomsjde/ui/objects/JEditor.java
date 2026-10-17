@@ -1,10 +1,10 @@
 package com.imjustdoom.doomsjde.ui.objects;
 
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.api.data.objects.Settings;
-import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
-import com.imjustdoom.doomsjde.api.files.GenericReader;
-import com.imjustdoom.doomsjde.api.files.ReadableType;
+import com.imjustdoom.doomsjde.api.storage.objects.Settings;
+import com.imjustdoom.doomsjde.api.storage.objects.WorkspaceState;
+import com.imjustdoom.doomsjde.api.syntax.GenericReader;
+import com.imjustdoom.doomsjde.api.syntax.ReadableType;
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;

@@ -2,8 +2,8 @@ package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.constants.Colours;
-import com.imjustdoom.doomsjde.api.data.StorageManager;
-import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
+import com.imjustdoom.doomsjde.api.storage.StorageManager;
+import com.imjustdoom.doomsjde.api.storage.objects.WorkspaceState;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.ui.adapters.WindowCloseAdapter;
 import com.imjustdoom.doomsjde.ui.objects.JEditor;

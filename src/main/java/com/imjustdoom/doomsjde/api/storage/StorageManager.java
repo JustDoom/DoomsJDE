@@ -1,9 +1,9 @@
-package com.imjustdoom.doomsjde.api.data;
+package com.imjustdoom.doomsjde.api.storage;
 
-import com.imjustdoom.doomsjde.api.data.interfaces.IStorageManager;
-import com.imjustdoom.doomsjde.api.data.objects.Settings;
-import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
-import com.imjustdoom.doomsjde.api.data.objects.project.ProjectTab;
+import com.imjustdoom.doomsjde.api.storage.interfaces.IStorageManager;
+import com.imjustdoom.doomsjde.api.storage.objects.Settings;
+import com.imjustdoom.doomsjde.api.storage.objects.WorkspaceState;
+import com.imjustdoom.doomsjde.api.storage.objects.project.ProjectTab;
 import org.jspecify.annotations.NullMarked;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.SerializationFeature;

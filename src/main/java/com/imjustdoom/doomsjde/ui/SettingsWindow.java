@@ -1,8 +1,8 @@
 package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.api.data.StorageManager;
-import com.imjustdoom.doomsjde.api.data.objects.Settings;
+import com.imjustdoom.doomsjde.api.storage.StorageManager;
+import com.imjustdoom.doomsjde.api.storage.objects.Settings;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 
 import javax.swing.*;
