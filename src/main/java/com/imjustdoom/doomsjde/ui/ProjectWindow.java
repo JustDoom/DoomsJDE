@@ -1,19 +1,17 @@
 package com.imjustdoom.doomsjde.ui;
 
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.api.constants.Colours;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.WorkspaceState;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.ui.adapters.WindowCloseAdapter;
+import com.imjustdoom.doomsjde.ui.components.BarComponent;
 import com.imjustdoom.doomsjde.ui.objects.JEditor;
 import com.imjustdoom.doomsjde.ui.objects.JFileTree;
 import com.imjustdoom.doomsjde.ui.objects.JTerminal;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -25,6 +23,7 @@ import java.nio.file.Path;
 import java.util.logging.Logger;
 
 public class ProjectWindow extends JFrame {
+
     private final StorageManager storageManager;
     private final Logger logger;
     private final JDE instance;
@@ -32,7 +31,6 @@ public class ProjectWindow extends JFrame {
     private final JSplitPane projectEditorSplitPane;
     private final JSplitPane terminalEditorSplitPane;
 
-    private final JToolBar toolbar;
     private final JEditor editor;
     private final JFileTree fileTree;
     private final JTerminal terminal;
@@ -43,11 +41,7 @@ public class ProjectWindow extends JFrame {
         this.storageManager = this.instance.getStorageManager();
 
         // UI setup - Create the elements
-        JPanel panel = new JPanel(new BorderLayout());
-
-        this.toolbar = new JToolBar();
-        this.toolbar.setFloatable(false);
-        this.toolbar.setRollover(true);
+        final JPanel panel = new JPanel(new BorderLayout());
 
         this.editor = new JEditor(this.instance);
 
@@ -68,12 +62,15 @@ public class ProjectWindow extends JFrame {
         this.terminalEditorSplitPane.setResizeWeight(0.75);
         this.terminalEditorSplitPane.setOneTouchExpandable(true);
 
-        this.toolbar.add(button("⚙", Color.lightGray, _ -> new SettingsWindow(this.instance).setVisible(true)));
-        this.toolbar.addSeparator();
-        this.toolbar.add(button("▶", _ -> runProject()));
-
-        panel.add(this.toolbar, BorderLayout.NORTH);
+        panel.add(new BarComponent(this.instance)
+                .withButton("⚙", Color.lightGray, _ -> new SettingsWindow(this.instance).setVisible(true))
+                .withButton("▶", _ -> runProject())
+                .init().build(), BorderLayout.NORTH);
         panel.add(this.terminalEditorSplitPane, BorderLayout.CENTER);
+        panel.add(new BarComponent(this.instance)
+                .withButton("⚙", Color.lightGray, _ -> new SettingsWindow(this.instance).setVisible(true))
+                .withButton("▶", _ -> runProject())
+                .init().build(), BorderLayout.PAGE_END);
 
         // Run after UI setup as it modifies the UI
         setupState(directory, this.storageManager.getAllWorkspaceData().get(directory.getName()));
@@ -138,6 +135,7 @@ public class ProjectWindow extends JFrame {
     // TODO: Actually kill any alive processes when the IDE window closes
     private void runProject() {
         this.terminal.setText("");
+
         new Thread(() -> {
             try {
                 final String os = System.getProperty("os.name");
@@ -162,23 +160,5 @@ public class ProjectWindow extends JFrame {
                 throw new RuntimeException(ex);
             }
         }, "gradle-task").start();
-    }
-
-    private JButton button(final ImageIcons icon, final int width, final int height, final ActionListener listener) {
-        JButton button = new JButton(
-                new ImageIcon(this.instance.readLogo(icon).get().getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING)));
-        button.addActionListener(listener);
-        return button;
-    }
-
-    private JButton button(final String text, final ActionListener listener) {
-        return button(text, Colours.NICE_GREEN, listener);
-    }
-
-    private JButton button(final String text, final Color colour, final ActionListener listener) {
-        JButton button = new JButton(text);
-        button.setForeground(colour);
-        button.addActionListener(listener);
-        return button;
     }
 }

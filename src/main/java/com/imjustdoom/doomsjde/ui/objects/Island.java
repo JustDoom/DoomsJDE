@@ -6,10 +6,20 @@ import java.awt.*;
 import java.util.function.Consumer;
 
 @NullMarked
-public final class Island extends JPanel {
+public class Island extends JPanel {
 
     public Island withBorder(final Color color, final int thickness) {
         setBorder(BorderFactory.createLineBorder(color, thickness, true));
+
+        return this;
+    }
+
+    public Island withToolBar(final String layout, final Consumer<JToolBar> consumer) {
+        final JToolBar toolbar = new JToolBar();
+
+        consumer.accept(toolbar);
+
+        add(toolbar, layout);
 
         return this;
     }
