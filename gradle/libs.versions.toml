@@ -5,6 +5,8 @@ jspecify = "1.0.1" # https://jspecify.dev/docs/using/
 ## Gradle API
 shadow = "9.6.1" # https://github.com/GradleUp/shadow/
 
+javafx = "0.1.0"
+
 ## File API
 jackson = "3.2.3" # https://github.com/fasterxml/jackson-core
 
@@ -20,6 +22,8 @@ junit-bom = "6.1.3"
 [plugins]
 # https://github.com/GradleUp/shadow
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+
+javafx = { id = "org.openjfx.javafxplugin", version.ref = "javafx" }
 
 [libraries]
 # https://github.com/fasterxml/jackson-core

@@ -1,9 +1,8 @@
 package com.imjustdoom.doomsjde.ui.adapters;
 
-import com.imjustdoom.doomsjde.ui.ProjectWindow;
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
-import javax.swing.*;
+import com.imjustdoom.doomsjde.ui.ProjectWindow;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -21,6 +20,6 @@ public class WindowCloseAdapter extends WindowAdapter {
     public void windowClosing(final WindowEvent event) {
         this.editor.dispose();
 
-        SwingUtilities.invokeLater(() -> new ProjectBrowser(this.instance).init().setVisible(true));
+//        SwingUtilities.invokeLater(() -> new ProjectBrowser(this.instance).init().setVisible(true));
     }
 }

@@ -5,7 +5,10 @@ import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.jspecify.annotations.NullMarked;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +21,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @NullMarked
-public final class JDE {
+public final class JDE extends Application {
 
     private final StorageManager storageManager;
 
@@ -36,7 +39,8 @@ public final class JDE {
         this.settings = new Settings();
     }
 
-    public void init() {
+    @Override
+    public void start(Stage primaryStage) {
         this.storageManager.init();
 
         this.settings = this.storageManager.getSettings();
@@ -59,7 +63,7 @@ public final class JDE {
 
         UIManager.put("defaultFont", new Font(selectedFont, Font.PLAIN, 14));
 
-        SwingUtilities.invokeLater(() -> new ProjectBrowser(this).init().setVisible(true));
+        new ProjectBrowser(this).show();
     }
 
     public Optional<BufferedImage> readLogo(final ImageIcons icon) {

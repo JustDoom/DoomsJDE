@@ -1,5 +1,6 @@
 import com.imjustdoom.doomsjde.api.JDE;
+import javafx.application.Application;
 
 void main() {
-    new JDE().init();
+    Application.launch(JDE.class);
 }

@@ -1,111 +1,108 @@
 package com.imjustdoom.doomsjde.ui.panels;
 
-import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.ui.ProjectWindow;
-import com.imjustdoom.doomsjde.ui.objects.Island;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
-import javax.swing.*;
-import java.awt.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
-public class ProjectBrowser extends JFrame {
-
+public class ProjectBrowser {
     private final JDE instance;
     private final StorageManager storageManager;
     private final Logger logger;
+    private final Stage stage;
 
     public ProjectBrowser(@NonNull final JDE instance) {
         this.instance = instance;
         this.storageManager = this.instance.getStorageManager();
         this.logger = this.instance.getLogger();
+        this.stage = new Stage();
+        init();
     }
 
     public ProjectBrowser init() {
-        final JPanel island = new Island()
-                .withBorderLayout()
-                .withButton(button -> {
-                    button.setText("Select Project");
+        final Button selectButton = new Button("Select Project");
+        selectButton.setMaxWidth(Double.MAX_VALUE);
+        selectButton.setOnAction(_ -> {
+            final DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle("Project Browser");
+            chooser.setInitialDirectory(new File("."));
 
-                    button.addActionListener(_ -> {
-                        final JFileChooser chooser = new JFileChooser();
+            final File selected = chooser.showDialog(this.stage);
+            if (selected == null) return;
 
-                        chooser.setCurrentDirectory(new java.io.File("."));
+            if (!selected.isDirectory()) {
+                this.logger.warning("A valid directory must have been selected!");
+                return;
+            }
 
-                        chooser.setDialogTitle("Project Browser");
-
-                        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-                        chooser.setAcceptAllFileFilterUsed(false);
-
-                        if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
-                            return;
-                        }
-
-                        if (!chooser.getSelectedFile().isDirectory()) {
-                            this.logger.warning("A valid directory must have been selected!");
-
-                            return;
-                        }
-
-                        dispose();
-
-                        try {
-                            this.storageManager.addProject(chooser.getSelectedFile().getName(), Path.of(chooser.getSelectedFile().getAbsolutePath()));
-
-                            new ProjectWindow(this.instance, chooser.getSelectedFile()).setVisible(true);
-                        } catch (final Exception exception) {
-                            throw new RuntimeException(exception);
-                        }
-                    });
-                }, BorderLayout.NORTH);
-
-        int MAX_BUTTON_HEIGHT = 40;
-
-        final JPanel projects = new Island().withBoxLayout(BoxLayout.Y_AXIS).withIsland(builder -> {
-            this.storageManager.getProjects().forEach((_, tab) -> {
-                builder.withButton(button -> {
-                    button.setText("%s - %s".formatted(tab.projectName, tab.projectPath));
-                    button.setIcon(null);
-
-                    button.addActionListener(_ -> {
-                        dispose();
-
-                        try {
-                            new ProjectWindow(this.instance, new File(tab.projectPath)).setVisible(true);
-                        } catch (final IOException exception) {
-                            throw new RuntimeException(exception);
-                        }
-                    });
-
-                    button.setMaximumSize(new Dimension(Integer.MAX_VALUE, MAX_BUTTON_HEIGHT));
-                    button.setPreferredSize(new Dimension(0, MAX_BUTTON_HEIGHT));
-                    button.setAlignmentX(Component.LEFT_ALIGNMENT);
-                });
-            });
+            this.stage.close();
+            try {
+                this.storageManager.addProject(selected.getName(), Path.of(selected.getAbsolutePath()));
+                new ProjectWindow(this.instance, selected).setVisible(true);
+            } catch (final Exception exception) {
+                throw new RuntimeException(exception);
+            }
         });
 
-        island.add(new JScrollPane(projects), BorderLayout.CENTER);
+        final VBox projects = new VBox();
+        projects.setSpacing(8);
+        projects.setPadding(new Insets(10));
 
-        setContentPane(island);
+        final int MAX_BUTTON_HEIGHT = 40;
 
-        setTitle("Project Selector");
+        this.storageManager.getProjects().forEach((_, tab) -> {
+            final Button button = new Button("%s - %s".formatted(tab.projectName, tab.projectPath));
+            button.setMaxWidth(Double.MAX_VALUE);
+            button.setPrefHeight(MAX_BUTTON_HEIGHT);
+            button.setMinHeight(MAX_BUTTON_HEIGHT);
+            button.setOnAction(_ -> {
+                this.stage.close();
+                try {
+                    new ProjectWindow(this.instance, new File(tab.projectPath)).setVisible(true);
+                } catch (final IOException exception) {
+                    throw new RuntimeException(exception);
+                }
+            });
+            projects.getChildren().add(button);
+        });
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        final ScrollPane scrollPane = new ScrollPane(projects);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
 
-        setMinimumSize(new Dimension(512, 512));
+        final BorderPane root = new BorderPane();
+        root.setTop(selectButton);
+        root.setCenter(scrollPane);
+        BorderPane.setMargin(selectButton, new Insets(10));
+        BorderPane.setMargin(scrollPane, new Insets(0, 10, 10, 10));
 
-        this.instance.readLogo(ImageIcons.LOGO).ifPresent(this::setIconImage);
+        final Scene scene = new Scene(root, 512, 512);
+        this.stage.setTitle("Project Selector");
+        this.stage.setScene(scene);
+        this.stage.setMinWidth(512);
+        this.stage.setMinHeight(512);
 
-        //this reduces the windows to fit the size of the content, so minimum size above is nice to have.
-        pack();
-
-        setLocationRelativeTo(null);
+//        this.instance.readLogo(ImageIcons.LOGO).ifPresent(image ->
+//                this.stage.getIcons().add(image)
+//        );
 
         return this;
+    }
+
+    public void show() {
+        this.stage.show();
     }
 }

@@ -2,6 +2,7 @@ plugins {
     `java-library`
     application
     alias(libs.plugins.shadow)
+    alias(libs.plugins.javafx)
 }
 
 application {
@@ -29,10 +30,21 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    implementation("org.fxmisc.richtext:richtextfx:0.11.7")
+
     implementation(libs.bundles.fifesoft)
     implementation(libs.bundles.formdev)
     implementation(libs.bundles.jackson)
     implementation(libs.jspecify)
+}
+
+javafx {
+    version = "27"
+    modules(
+        "javafx.controls",
+        "javafx.fxml",
+        "javafx.graphics"
+    )
 }
 
 tasks {
