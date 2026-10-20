@@ -88,7 +88,7 @@ public class ProjectWindow extends JFrame {
         addWindowListener(new WindowCloseAdapter(this.instance, this));
 
         setTitle("Dooms JDE");
-        this.instance.readLogo(ImageIcons.LOGO).ifPresent(this::setIconImage);
+        //this.instance.readLogo(ImageIcons.LOGO).ifPresent(this::setIconImage);
         setupKeybinds();
         pack();
         setLocationRelativeTo(null);
@@ -165,10 +165,11 @@ public class ProjectWindow extends JFrame {
     }
 
     private JButton button(final ImageIcons icon, final int width, final int height, final ActionListener listener) {
-        JButton button = new JButton(
-                new ImageIcon(this.instance.readLogo(icon).get().getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING)));
-        button.addActionListener(listener);
-        return button;
+        //JButton button = new JButton(
+        //        new ImageIcon(this.instance.readLogo(icon).get().getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING)));
+        //button.addActionListener(listener);
+        //return button;
+        return null;
     }
 
     private JButton button(final String text, final ActionListener listener) {

@@ -38,7 +38,7 @@ public class SettingsWindow extends JFrame {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
         setTitle("Settings");
-        this.instance.readLogo(ImageIcons.LOGO).ifPresent(this::setIconImage);
+        //this.instance.readLogo(ImageIcons.LOGO).ifPresent(this::setIconImage);
         setupKeybinds();
         pack();
         setLocationRelativeTo(null);
@@ -103,13 +103,6 @@ public class SettingsWindow extends JFrame {
         row.setAlignmentX(Component.LEFT_ALIGNMENT);
         row.setMaximumSize(new Dimension(512, row.getPreferredSize().height));
         return row;
-    }
-
-    private JButton button(final ImageIcons icon, final int width, final int height, final ActionListener listener) {
-        JButton button = new JButton(
-                new ImageIcon(this.instance.readLogo(icon).get().getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING)));
-        button.addActionListener(listener);
-        return button;
     }
 
     private JButton button(final String text, final ActionListener listener) {
