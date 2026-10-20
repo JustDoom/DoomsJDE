@@ -1,10 +1,9 @@
 package com.imjustdoom.doomsjde.ui.panels;
 
 import com.imjustdoom.doomsjde.api.JDE;
-import com.imjustdoom.doomsjde.api.data.StorageManager;
-import com.imjustdoom.doomsjde.api.enums.ImageIcons;
-import com.imjustdoom.doomsjde.ui.ProjectWindow;
 import com.imjustdoom.doomsjde.ui.components.ProjectButton;
+import com.imjustdoom.doomsjde.ui.components.Window;
+import com.imjustdoom.doomsjde.ui.panels.editor.ProjectWindow;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,27 +14,22 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NullMarked;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
 @NullMarked
-public class ProjectBrowser {
-    
-    private final JDE instance;
-    private final StorageManager storageManager;
-    private final Logger logger;
+public class ProjectBrowser extends Window {
+
     private final Stage stage;
 
     public ProjectBrowser(final JDE instance, final Stage stage) {
-        this.instance = instance;
-        this.storageManager = this.instance.getStorageManager();
-        this.logger = this.instance.getLogger();
+        super(instance);
 
         this.stage = stage;
     }
 
     public ProjectBrowser init() {
+        super.init(this.stage, true);
+
         final Button selectButton = new ProjectButton()
                 .withText("Select Project")
                 .withMaxWidth(Double.MAX_VALUE)
@@ -45,11 +39,13 @@ public class ProjectBrowser {
                     chooser.setTitle("Project Browser");
                     chooser.setInitialDirectory(new File("."));
 
-                    final File selected = chooser.showDialog(this.stage);
+                    final File file = chooser.showDialog(this.stage);
 
-                    if (selected == null) return;
+                    if (file == null) { //todo() show popup if null.
+                        return;
+                    }
 
-                    if (!selected.isDirectory()) {
+                    if (!file.isDirectory()) { //todo() show popup to warn them
                         this.logger.warning("A valid directory must have been selected!");
 
                         return;
@@ -58,8 +54,9 @@ public class ProjectBrowser {
                     this.stage.close();
 
                     try {
-                        this.storageManager.addProject(selected.getName(), Path.of(selected.getAbsolutePath()));
-                        new ProjectWindow(this.instance, selected).setVisible(true);
+                        this.storageManager.addProject(file.getName(), file.toPath());
+
+                        new ProjectWindow(this.instance, file.toPath()).init();
                     } catch (final Exception exception) {
                         throw new RuntimeException(exception);
                     }
@@ -81,11 +78,7 @@ public class ProjectBrowser {
                     .withAction(_ -> {
                         this.stage.close();
 
-                        try {
-                            new ProjectWindow(this.instance, new File(tab.projectPath)).setVisible(true);
-                        } catch (final IOException exception) {
-                            throw new RuntimeException(exception);
-                        }
+                        new ProjectWindow(this.instance, Path.of(tab.projectPath)).init();
                     });
 
             projects.getChildren().add(button.build());
@@ -104,8 +97,6 @@ public class ProjectBrowser {
         BorderPane.setMargin(scrollPane, new Insets(0, 10, 10, 10));
 
         final Scene scene = new Scene(root, 512, 512);
-
-        this.instance.readLogo(ImageIcons.LOGO).ifPresent(logo -> this.stage.getIcons().add(logo));
 
         this.stage.setTitle("Welcome to JDE!");
         this.stage.setScene(scene);

@@ -6,5 +6,5 @@ public class Settings {
     public boolean visibleWhitespace = false;
 
     // dark;light;system
-    public String theme = "dark";
+    public String theme = "system";
 }

@@ -3,17 +3,18 @@ package com.imjustdoom.doomsjde.api;
 import atlantafx.base.theme.PrimerDark;
 import atlantafx.base.theme.PrimerLight;
 import atlantafx.base.theme.ThemeManager;
-import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NullMarked;
-import javax.swing.*;
-import java.awt.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -49,7 +50,8 @@ public final class JDE extends Application {
 
     @Override
     public void start(final Stage stage) {
-        FlatDraculaIJTheme.setup();
+        Platform.setImplicitExit(false);
+        /*FlatDraculaIJTheme.setup();
 
         final String selectedFont = "JetBrains Mono"; // Will hook this up to settings later
         boolean hasFont = false;
@@ -65,7 +67,7 @@ public final class JDE extends Application {
             JOptionPane.showMessageDialog(null, "Unable to find the font '" + selectedFont + "', a default font will be used.");
         }
 
-        UIManager.put("defaultFont", new Font(selectedFont, Font.PLAIN, 14));
+        UIManager.put("defaultFont", new Font(selectedFont, Font.PLAIN, 14));*/
 
         //todo() make custom theme(let me have fun)
         switch (this.settings.theme) {
