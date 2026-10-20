@@ -19,6 +19,8 @@ formdev-flatlaf = "3.7.2"
 
 junit-bom = "6.1.3"
 
+atlantafx = "3.0.0"
+
 [plugins]
 # https://github.com/GradleUp/shadow
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
@@ -40,6 +42,8 @@ fifesoft-rstaui = { module = "com.fifesoft:rstaui", version.ref = "fifesoft-rsta
 
 formdev-flatlaf-intellij = { module = "com.formdev:flatlaf-intellij-themes", version.ref = "formdev-flatlaf" }
 formdev-flatlaf = { module = "com.formdev:flatlaf", version.ref = "formdev-flatlaf" }
+
+atlantafx-base = { module = "io.github.mkpaz:atlantafx-base", version.ref = "atlantafx" }
 
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit-bom" }
 

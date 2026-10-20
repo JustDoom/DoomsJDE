@@ -35,6 +35,8 @@ dependencies {
     implementation(libs.bundles.fifesoft)
     implementation(libs.bundles.formdev)
     implementation(libs.bundles.jackson)
+
+    implementation(libs.atlantafx.base)
     implementation(libs.jspecify)
 }
 
