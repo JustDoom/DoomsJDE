@@ -6,13 +6,11 @@ import com.imjustdoom.doomsjde.api.data.objects.Settings;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NullMarked;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -40,7 +38,7 @@ public final class JDE extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(final Stage stage) {
         this.storageManager.init();
 
         this.settings = this.storageManager.getSettings();
@@ -63,15 +61,15 @@ public final class JDE extends Application {
 
         UIManager.put("defaultFont", new Font(selectedFont, Font.PLAIN, 14));
 
-        new ProjectBrowser(this).show();
+        new ProjectBrowser(this, stage).init();
     }
 
-    public Optional<BufferedImage> readLogo(final ImageIcons icon) {
-        BufferedImage image = null;
+    public Optional<Image> readLogo(final ImageIcons icon) {
+        Image image = null;
 
-        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(icon.getPath() + ".png")) {
+        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(icon.getPath())) {
             if (inputStream != null) {
-                image = ImageIO.read(inputStream);
+                image = new Image(inputStream);
             }
         } catch (final IOException exception) {
             exception.printStackTrace();

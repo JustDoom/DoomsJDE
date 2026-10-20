@@ -1,7 +1,8 @@
 package com.imjustdoom.doomsjde.api.enums;
 
 public enum ImageIcons {
-    LOGO("icon");
+
+    LOGO("icon.png");
 
     private final String path;
 
