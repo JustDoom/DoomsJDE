@@ -38,11 +38,14 @@ public final class JDE extends Application {
     }
 
     @Override
-    public void start(final Stage stage) {
+    public void init() {
         this.storageManager.init();
 
         this.settings = this.storageManager.getSettings();
+    }
 
+    @Override
+    public void start(final Stage stage) {
         FlatDraculaIJTheme.setup();
 
         final String selectedFont = "JetBrains Mono"; // Will hook this up to settings later
