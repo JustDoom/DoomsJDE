@@ -3,8 +3,6 @@ package com.imjustdoom.doomsjde.ui;
 import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.data.objects.Settings;
-import com.imjustdoom.doomsjde.api.enums.ImageIcons;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -19,6 +17,7 @@ public class SettingsWindow extends JFrame {
     private final JSpinner zoomLevel = new JSpinner(new SpinnerNumberModel(14, 6, 48, 1));
     private final JSpinner marginLine = new JSpinner(new SpinnerNumberModel(80, 0, 255, 1));
     private final JCheckBox visibleWhitespace = new JCheckBox();
+    private final JComboBox<String> theme = new JComboBox<>();
 
     public SettingsWindow(JDE instance) {
         this.instance = instance;
@@ -59,6 +58,7 @@ public class SettingsWindow extends JFrame {
         this.zoomLevel.setValue(settings.zoomLevel);
         this.marginLine.setValue(settings.marginLinePosition);
         this.visibleWhitespace.setSelected(settings.visibleWhitespace);
+        this.theme.setSelectedItem(settings.theme);
         this.logger.info("Settings loaded");
     }
 
@@ -67,6 +67,7 @@ public class SettingsWindow extends JFrame {
         settings.zoomLevel = (int) this.zoomLevel.getValue();
         settings.marginLinePosition = (int) this.marginLine.getValue();
         settings.visibleWhitespace = this.visibleWhitespace.isSelected();
+        settings.theme = (String) this.theme.getSelectedItem();
         this.instance.getStorageManager().setSettings(settings);
         this.logger.info("Settings saved");
 
@@ -82,6 +83,8 @@ public class SettingsWindow extends JFrame {
         panel.add(row("Margin Line", this.marginLine));
         panel.add(Box.createVerticalStrut(8));
         panel.add(row("Visible Whitespace", this.visibleWhitespace));
+        panel.add(Box.createVerticalGlue());
+        panel.add(row("System Theme", this.theme));
         panel.add(Box.createVerticalGlue());
 
         return panel;

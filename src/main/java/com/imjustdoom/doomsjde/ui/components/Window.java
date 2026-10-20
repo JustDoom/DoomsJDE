@@ -4,8 +4,10 @@ import com.imjustdoom.doomsjde.api.JDE;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
 import com.imjustdoom.doomsjde.api.enums.ImageIcons;
 import com.imjustdoom.doomsjde.ui.panels.ProjectBrowser;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NullMarked;
+import java.net.URL;
 import java.util.logging.Logger;
 
 @NullMarked
@@ -37,5 +39,15 @@ public abstract class Window {
 
             new ProjectBrowser(this.instance, new Stage()).init();
         });
+    }
+
+    public void post(final Scene scene) {
+        final URL text = getClass().getClassLoader().getResource("global.css");
+
+        if (text == null) {
+            return;
+        }
+
+        scene.getStylesheets().add(text.toExternalForm());
     }
 }

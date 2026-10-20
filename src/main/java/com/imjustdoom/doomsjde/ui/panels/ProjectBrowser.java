@@ -1,6 +1,7 @@
 package com.imjustdoom.doomsjde.ui.panels;
 
 import com.imjustdoom.doomsjde.api.JDE;
+import com.imjustdoom.doomsjde.ui.SettingsWindow;
 import com.imjustdoom.doomsjde.ui.components.ProjectButton;
 import com.imjustdoom.doomsjde.ui.components.Window;
 import com.imjustdoom.doomsjde.ui.panels.editor.ProjectWindow;
@@ -89,14 +90,23 @@ public class ProjectBrowser extends Window {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
+        final BorderPane pane = new BorderPane();
+
+        pane.setBottom(new ProjectButton().withText("⚙").withAction(_ -> {
+            new SettingsWindow(this.instance).setVisible(true);
+        }).build());
+
         final BorderPane root = new BorderPane();
 
         root.setTop(selectButton);
         root.setCenter(scrollPane);
+        root.setLeft(pane);
         BorderPane.setMargin(selectButton, new Insets(10));
         BorderPane.setMargin(scrollPane, new Insets(0, 10, 10, 10));
 
         final Scene scene = new Scene(root, 512, 512);
+
+        super.post(scene);
 
         this.stage.setTitle("Welcome to JDE!");
         this.stage.setScene(scene);

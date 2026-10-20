@@ -57,6 +57,8 @@ public class ProjectWindow extends Window {
 
         final Scene scene = new Scene(borderPane, 1024, 1024);
 
+        super.post(scene);
+
         this.stage.setScene(scene);
         // fills the full window, we can retain resolution changes later.
         this.stage.setMaximized(true);
