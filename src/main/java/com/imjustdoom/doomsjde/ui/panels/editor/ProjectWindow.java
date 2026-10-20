@@ -55,7 +55,7 @@ public class ProjectWindow extends Window {
 
         borderPane.setLeft(scrollPane);
 
-        final Scene scene = new Scene(borderPane, 50, 300);
+        final Scene scene = new Scene(borderPane, 1024, 1024);
 
         this.stage.setScene(scene);
         // fills the full window, we can retain resolution changes later.
