@@ -1,5 +1,7 @@
 package com.imjustdoom.doomsjde.api;
 
+import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.PrimerLight;
 import atlantafx.base.theme.ThemeManager;
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 import com.imjustdoom.doomsjde.api.data.StorageManager;
@@ -66,7 +68,11 @@ public final class JDE extends Application {
         UIManager.put("defaultFont", new Font(selectedFont, Font.PLAIN, 14));
 
         //todo() make custom theme(let me have fun)
-        ThemeManager.useDefault(); // use system theme for now i.e. dark or not
+        switch (this.settings.theme) {
+            case "dark" -> ThemeManager.instance().setTheme(new PrimerDark());
+            case "light" -> ThemeManager.instance().setTheme(new PrimerLight());
+            case "system" -> ThemeManager.useDefault();
+        }
 
         new ProjectBrowser(this, stage).init();
     }

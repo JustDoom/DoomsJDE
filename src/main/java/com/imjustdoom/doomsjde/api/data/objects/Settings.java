@@ -4,4 +4,7 @@ public class Settings {
     public int zoomLevel = 14;
     public int marginLinePosition = 80;
     public boolean visibleWhitespace = false;
+
+    // dark;light;system
+    public String theme = "dark";
 }
