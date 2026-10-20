@@ -89,6 +89,10 @@ public final class JDE extends Application {
         return this.settings;
     }
 
+    public Path getDirectory() {
+        return this.directory;
+    }
+
     public Logger getLogger() {
         return this.logger;
     }
