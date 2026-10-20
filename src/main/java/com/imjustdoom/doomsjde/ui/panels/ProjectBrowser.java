@@ -6,9 +6,11 @@ import com.imjustdoom.doomsjde.ui.components.ProjectButton;
 import com.imjustdoom.doomsjde.ui.components.Window;
 import com.imjustdoom.doomsjde.ui.panels.editor.ProjectWindow;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -92,6 +94,11 @@ public class ProjectBrowser extends Window {
 
         final BorderPane pane = new BorderPane();
 
+        final Separator separator = new Separator();
+        separator.setOrientation(Orientation.HORIZONTAL);
+
+        pane.setTop(separator);
+
         pane.setBottom(new ProjectButton().withText("⚙").withAction(_ -> {
             new SettingsWindow(this.instance).setVisible(true);
         }).build());
@@ -100,9 +107,10 @@ public class ProjectBrowser extends Window {
 
         root.setTop(selectButton);
         root.setCenter(scrollPane);
-        root.setLeft(pane);
+        root.setBottom(pane);
         BorderPane.setMargin(selectButton, new Insets(10));
         BorderPane.setMargin(scrollPane, new Insets(0, 10, 10, 10));
+        BorderPane.setMargin(pane, new Insets(10));
 
         final Scene scene = new Scene(root, 512, 512);
 
